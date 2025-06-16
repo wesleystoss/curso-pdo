@@ -6,5 +6,10 @@
     },
     "require": {
         "ext-pdo": "*"
+    },
+    "scripts": {
+        "listar": "php lista-alunos.php",
+        "inserir": "php inserir-aluno.php",
+        "excluir": "php excluir-aluno.php"
     }
 }
