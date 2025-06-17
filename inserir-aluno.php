@@ -9,15 +9,17 @@ $pdo = new PDO('sqlite:' . $databasePath);
 
 $student = new Student(
     id: null,
-    name: "Patrícia Freitas",
-    new \DateTimeImmutable(time: '1986-10-25');
+    name: "Patrícia ' Freitas",
+    birthDate: new \DateTimeImmutable('1986-10-25')
 );
 
 $sqlInsert = "INSERT INTO students (name, birth_date) VALUES (:name, :birth_date);";
 $statement = $pdo->prepare($sqlInsert);
-$statement->bindValue(parameter: ':name', $student->name());
-$statement->bindValue(parameter: ':birth_date', $student->birthDate()->format(format:'Y-m-d'));
+$statement->bindValue(':name', $student->name());
+$statement->bindValue(':birth_date', $student->birthDate()->format('Y-m-d'));
 
 if ($statement->execute()) {
-    echo "Aluno incluído";
+    echo "Aluno incluído" . PHP_EOL;
+} else {
+    echo "Erro ao incluir aluno" . PHP_EOL;
 }
