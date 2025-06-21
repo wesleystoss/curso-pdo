@@ -25,6 +25,11 @@ class Student
         return $this->name;
     }
 
+    public function changeName(string $name): void
+    {
+        $this->name = $name;
+    }
+
     public function birthDate(): \DateTimeInterface
     {
         return $this->birthDate;
@@ -35,5 +40,10 @@ class Student
         return $this->birthDate
             ->diff(new \DateTimeImmutable())
             ->y;
+    }
+
+    public function defineId(int $id): void
+    {
+        $this->id = $id;
     }
 }

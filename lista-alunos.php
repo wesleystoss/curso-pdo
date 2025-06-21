@@ -12,6 +12,7 @@ $statement = $pdo->query('SELECT * FROM students');
 $studentDataList = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($studentDataList as $student) {
+    echo "------------------------" . PHP_EOL;
     $birthDate = new \DateTimeImmutable($student['birth_date']);
     $age = $birthDate->diff(new \DateTimeImmutable())->y;
     echo "ID: " . $student['id'] . PHP_EOL;
@@ -19,5 +20,5 @@ foreach ($studentDataList as $student) {
     echo "Data de Nascimento: " . $student['birth_date'] . PHP_EOL;
     echo "Idade: " . $age . " anos" . PHP_EOL;
     echo "------------------------" . PHP_EOL;
-    echo $student['id'] . ' - ' . $student['name'] . ' - ' . $student['birth_date'] . ' - ' . $age . ' anos' . PHP_EOL;
+
 }
