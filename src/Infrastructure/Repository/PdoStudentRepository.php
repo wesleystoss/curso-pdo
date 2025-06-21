@@ -27,7 +27,9 @@ class PdoStudentRepository implements StudentRepository
             $studentList[] = new Student(
                 $studentData['id'],
                 $studentData['name'],
-                new \DateTimeImmutable($studentData['birth_date'])
+                new \DateTimeImmutable($studentData['birth_date']),
+                $studentData['cep'] ?? '',
+                $studentData['address'] ?? ''
             );
         }
         
@@ -47,7 +49,54 @@ class PdoStudentRepository implements StudentRepository
             $studentList[] = new Student(
                 $studentData['id'],
                 $studentData['name'],
-                new \DateTimeImmutable($studentData['birth_date'])
+                new \DateTimeImmutable($studentData['birth_date']),
+                $studentData['cep'] ?? '',
+                $studentData['address'] ?? ''
+            );
+        }
+        
+        return $studentList;
+    }
+
+    public function findById(int $id): ?Student
+    {
+        $sql = 'SELECT * FROM students WHERE id = ?';
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindValue(1, $id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $studentData = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($studentData) {
+            return new Student(
+                $studentData['id'],
+                $studentData['name'],
+                new \DateTimeImmutable($studentData['birth_date']),
+                $studentData['cep'] ?? '',
+                $studentData['address'] ?? ''
+            );
+        }
+        
+        return null;
+    }
+
+    public function findByName(string $name): array
+    {
+        $sql = 'SELECT * FROM students WHERE name LIKE ? ORDER BY name';
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindValue(1, '%' . $name . '%');
+        $stmt->execute();
+        
+        $studentDataList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $studentList = [];
+        foreach ($studentDataList as $studentData) {
+            $studentList[] = new Student(
+                $studentData['id'],
+                $studentData['name'],
+                new \DateTimeImmutable($studentData['birth_date']),
+                $studentData['cep'] ?? '',
+                $studentData['address'] ?? ''
             );
         }
         
@@ -73,11 +122,13 @@ class PdoStudentRepository implements StudentRepository
 
     private function insert(Student $student): bool
     {
-        $sql = 'INSERT INTO students (name, birth_date) VALUES (?, ?)';
+        $sql = 'INSERT INTO students (name, birth_date, cep, address) VALUES (?, ?, ?, ?)';
         $stmt = $this->connection->prepare($sql);
         $success = $stmt->execute([
             $student->name(),
-            $student->birthDate()->format('Y-m-d')
+            $student->birthDate()->format('Y-m-d'),
+            $student->cep(),
+            $student->address()
         ]);
 
         if ($success) {
@@ -89,11 +140,13 @@ class PdoStudentRepository implements StudentRepository
 
     private function update(Student $student): bool
     {
-        $sql = 'UPDATE students SET name = ?, birth_date = ? WHERE id = ?';
+        $sql = 'UPDATE students SET name = ?, birth_date = ?, cep = ?, address = ? WHERE id = ?';
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue(1, $student->name());
         $stmt->bindValue(2, $student->birthDate()->format('Y-m-d'));
-        $stmt->bindValue(3, $student->id(), PDO::PARAM_INT);
+        $stmt->bindValue(3, $student->cep());
+        $stmt->bindValue(4, $student->address());
+        $stmt->bindValue(5, $student->id(), PDO::PARAM_INT);
 
         return $stmt->execute();
     }
