@@ -10,6 +10,7 @@ class StudentController
 {
     private StudentRepository $repository;
     private CepService $cepService;
+    private const ITEMS_PER_PAGE = 3;
     
     public function __construct(StudentRepository $repository)
     {
@@ -23,6 +24,10 @@ class StudentController
         $error = '';
         $students = [];
         $searchResults = [];
+        $isSearch = isset($_POST['action']) && $_POST['action'] === 'search';
+        
+        // Paginação
+        $currentPage = max(1, (int)($_GET['page'] ?? 1));
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $action = $_POST['action'] ?? '';
@@ -55,18 +60,45 @@ class StudentController
             }
         }
         
-        // Buscar alunos
+        // Buscar alunos com paginação
         try {
-            $students = $this->repository->allStudents();
+            if ($isSearch && !empty($searchResults)) {
+                // Para busca, usar todos os resultados sem paginação
+                $students = $searchResults;
+                $totalStudents = count($searchResults);
+                $totalPages = 1;
+                $currentPage = 1;
+            } else {
+                // Para lista completa, aplicar paginação
+                $allStudents = $this->repository->allStudents();
+                $totalStudents = count($allStudents);
+                $totalPages = ceil($totalStudents / self::ITEMS_PER_PAGE);
+                $currentPage = min($currentPage, $totalPages);
+                
+                // Calcular offset e limit
+                $offset = ($currentPage - 1) * self::ITEMS_PER_PAGE;
+                $students = array_slice($allStudents, $offset, self::ITEMS_PER_PAGE);
+            }
         } catch (\Exception $e) {
             $error = 'Erro ao buscar alunos: ' . $e->getMessage();
+            $totalStudents = 0;
+            $totalPages = 1;
+            $currentPage = 1;
         }
         
         return [
             'message' => $message,
             'error' => $error,
             'students' => $students,
-            'searchResults' => $searchResults
+            'searchResults' => $searchResults,
+            'pagination' => [
+                'currentPage' => $currentPage,
+                'totalPages' => $totalPages,
+                'totalStudents' => $totalStudents,
+                'itemsPerPage' => self::ITEMS_PER_PAGE,
+                'hasNextPage' => $currentPage < $totalPages,
+                'hasPreviousPage' => $currentPage > 1
+            ]
         ];
     }
     

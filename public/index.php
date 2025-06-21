@@ -5,6 +5,7 @@ $message = $data['message'];
 $error = $data['error'];
 $students = $data['students'];
 $searchResults = $data['searchResults'] ?? [];
+$pagination = $data['pagination'] ?? [];
 $isSearch = isset($_POST['action']) && $_POST['action'] === 'search';
 
 // Se foi uma busca, usar os resultados da busca na tabela principal
@@ -39,7 +40,7 @@ if ($isSearch && !empty($searchResults)) {
             
             <div class="stats">
                 <div class="stat-card">
-                    <div class="stat-number"><?= count($students) ?></div>
+                    <div class="stat-number"><?= $pagination['totalStudents'] ?? count($students) ?></div>
                     <div class="stat-label"><?= $isSearch ? 'Alunos Encontrados' : 'Total de Alunos' ?></div>
                 </div>
                 <div class="stat-card">
@@ -128,11 +129,20 @@ if ($isSearch && !empty($searchResults)) {
             
             <div class="section">
                 <h2>📋 Lista de Alunos <?= $isSearch ? '<span class="search-indicator">(Resultados da Busca)</span>' : '' ?></h2>
-                <?php if (empty($students)): ?>
-                    <p style="text-align: center; color: #666; padding: 40px;">
-                        <?= $isSearch ? 'Nenhum aluno encontrado com os critérios informados.' : 'Nenhum aluno cadastrado ainda.' ?>
-                    </p>
-                <?php else: ?>
+                
+                <?php if (!empty($students)): ?>
+                    <!-- Informações de paginação -->
+                    <?php if (!$isSearch && $pagination['totalPages'] > 1): ?>
+                        <div class="pagination-info">
+                            <p>
+                                Mostrando <?= (($pagination['currentPage'] - 1) * $pagination['itemsPerPage']) + 1 ?> 
+                                a <?= min($pagination['currentPage'] * $pagination['itemsPerPage'], $pagination['totalStudents']) ?> 
+                                de <?= $pagination['totalStudents'] ?> alunos
+                                (Página <?= $pagination['currentPage'] ?> de <?= $pagination['totalPages'] ?>)
+                            </p>
+                        </div>
+                    <?php endif; ?>
+                    
                     <table class="students-table">
                         <thead>
                             <tr>
@@ -165,6 +175,52 @@ if ($isSearch && !empty($searchResults)) {
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                    
+                    <!-- Paginação -->
+                    <?php if (!$isSearch && $pagination['totalPages'] > 1): ?>
+                        <div class="pagination">
+                            <?php if ($pagination['hasPreviousPage']): ?>
+                                <a href="?page=<?= $pagination['currentPage'] - 1 ?>" class="btn btn-secondary">← Anterior</a>
+                            <?php endif; ?>
+                            
+                            <div class="pagination-numbers">
+                                <?php
+                                $startPage = max(1, $pagination['currentPage'] - 2);
+                                $endPage = min($pagination['totalPages'], $pagination['currentPage'] + 2);
+                                
+                                if ($startPage > 1): ?>
+                                    <a href="?page=1" class="pagination-number">1</a>
+                                    <?php if ($startPage > 2): ?>
+                                        <span class="pagination-ellipsis">...</span>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                                
+                                <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                                    <a href="?page=<?= $i ?>" 
+                                       class="pagination-number <?= $i === $pagination['currentPage'] ? 'active' : '' ?>">
+                                        <?= $i ?>
+                                    </a>
+                                <?php endfor; ?>
+                                
+                                <?php if ($endPage < $pagination['totalPages']): ?>
+                                    <?php if ($endPage < $pagination['totalPages'] - 1): ?>
+                                        <span class="pagination-ellipsis">...</span>
+                                    <?php endif; ?>
+                                    <a href="?page=<?= $pagination['totalPages'] ?>" class="pagination-number">
+                                        <?= $pagination['totalPages'] ?>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <?php if ($pagination['hasNextPage']): ?>
+                                <a href="?page=<?= $pagination['currentPage'] + 1 ?>" class="btn btn-secondary">Próxima →</a>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <p style="text-align: center; color: #666; padding: 40px;">
+                        <?= $isSearch ? 'Nenhum aluno encontrado com os critérios informados.' : 'Nenhum aluno cadastrado ainda.' ?>
+                    </p>
                 <?php endif; ?>
             </div>
         </div>
