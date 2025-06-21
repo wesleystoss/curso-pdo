@@ -2,69 +2,105 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
+O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
+e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
+
 ## [2.0.0] - 2024-01-XX
 
-### ✨ Adicionado
-- **Modal de Edição**: Interface moderna para editar alunos
-  - Modal com fundo escuro e blur
-  - Formulário pré-preenchido com dados do aluno
-  - Validação em tempo real
-  - Busca automática de CEP na modal
-  - Animações suaves de entrada e saída
-- **Botão de Editar**: Novo botão "✏️ Editar" na tabela de alunos
-- **Validação de Edição**: Verificação se o aluno existe antes de atualizar
-- **Feedback Visual**: Mensagens de sucesso/erro para operações de edição
+### 🚀 Adicionado
+- **API REST Completa** com endpoints para todas as operações CRUD
+- **Sistema de Logs** para auditoria completa de operações
+- **Cache Inteligente** para melhorar performance
+- **Validação Robusta** com classes de validação customizadas
+- **Exceções Customizadas** para tratamento profissional de erros
+- **Configuração por Ambiente** com variáveis de ambiente
+- **Testes Unitários** com PHPUnit para cobertura completa
+- **Painel de Administração** para monitoramento do sistema
+- **Documentação da API** com guia completo de uso
+- **Comandos de Administração** para gerenciar cache, logs e configurações
 
-### 🎨 Melhorado
-- **Interface**: Design mais moderno e responsivo
-- **UX**: Melhor experiência do usuário com modais
-- **Organização**: Estrutura de arquivos mais limpa e organizada
-- **Documentação**: README consolidado e mais completo
+### 🔧 Melhorado
+- **Arquitetura**: Implementação completa de Clean Architecture
+- **Segurança**: Validação e sanitização robusta de dados
+- **Performance**: Cache com TTL configurável e invalidação automática
+- **Manutenibilidade**: Código limpo e bem documentado
+- **Testabilidade**: Cobertura completa de testes
 
-### 🧹 Limpeza
-- **READMEs Consolidados**: Removidos arquivos README duplicados
-- **Scripts Organizados**: Documentação dos scripts mantidos
-- **Arquivos Desnecessários**: Removidos scripts básicos de exemplo
+### 🛡️ Segurança
+- **Validação de Entrada**: Todos os dados são validados antes do processamento
+- **CORS**: Configurável via variáveis de ambiente
+- **Rate Limiting**: Proteção contra abuso da API
+- **Logs de Auditoria**: Todas as operações são registradas
 
-### 🔧 Técnico
-- **Controller**: Adicionado método `updateStudent()` no `StudentController`
-- **Validação**: Verificação de existência do aluno antes da atualização
-- **CSS**: Estilos para modal e botão primário
-- **JavaScript**: Funções para controle da modal e validações
+### 📚 Documentação
+- **README Atualizado**: Documentação completa das novas funcionalidades
+- **API.md**: Documentação detalhada da API REST
+- **Comandos**: Novos scripts para administração do sistema
+
+### 🧪 Testes
+- **Testes Unitários**: Cobertura completa com PHPUnit
+- **Testes de Integração**: Verificação da integração com banco de dados
+- **Configuração PHPUnit**: Arquivo de configuração para testes
 
 ## [1.5.0] - 2024-01-XX
 
-### ✨ Adicionado
-- **Busca Unificada**: Busca por nome ou ID
-- **Paginação**: Navegação eficiente para grandes volumes de dados
-- **Exclusão em Lote**: Seleção múltipla e exclusão em massa
-- **Serviço de CEP**: Busca automática de endereço via API
-- **Estatísticas**: Cards com informações em tempo real
+### 🚀 Adicionado
+- **Funcionalidade de Edição**: Modal para editar alunos existentes
+- **Busca Cumulativa**: Busca por ID, nome e CEP simultaneamente
+- **Busca Automática de CEP**: Preenchimento automático de endereço
+- **Interface Moderna**: Design responsivo com animações
+- **Validação em Tempo Real**: Feedback imediato para o usuário
 
-### 🎨 Melhorado
-- **Interface Web**: Design responsivo e moderno
-- **Sistema de Abas**: Separação entre inserção e busca
-- **Feedback Visual**: Mensagens de sucesso e erro
-- **Validações**: Campos obrigatórios e validação de data
+### 🔧 Melhorado
+- **Organização do Projeto**: Estrutura limpa e bem documentada
+- **Documentação**: README consolidado e atualizado
+- **Interface**: Experiência do usuário melhorada
+
+### 🗂️ Organização
+- **Consolidação de READMEs**: 6 arquivos README consolidados em um
+- **Scripts Documentados**: README específico para scripts
+- **Changelog Atualizado**: Histórico completo de mudanças
 
 ## [1.0.0] - 2024-01-XX
 
-### ✨ Adicionado
-- **CRUD Básico**: Inserir, listar e excluir alunos
-- **Arquitetura MVC**: Padrão Model-View-Controller
-- **Clean Architecture**: Separação de responsabilidades
-- **PDO**: Persistência de dados com PHP Data Objects
-- **SQLite**: Banco de dados leve e portável
-- **Interface CLI**: Scripts para operações via linha de comando
-- **Testes**: Testes automatizados para validação
+### 🚀 Adicionado
+- **Sistema CRUD Completo**: Criar, ler, atualizar e excluir alunos
+- **Interface Web**: Formulários e tabelas para gerenciar alunos
+- **Banco de Dados SQLite**: Persistência de dados
+- **Busca de CEP**: Integração com API de CEP
+- **Paginação**: Navegação para grandes volumes de dados
+- **Exclusão em Lote**: Remoção de múltiplos alunos
+- **Scripts CLI**: Comandos para operações via terminal
 
 ### 🏗️ Arquitetura
-- **Domain Layer**: Modelos e interfaces de repositório
-- **Infrastructure Layer**: Implementações concretas
-- **Web Layer**: Controllers para interface web
-- **Persistence Layer**: Configurações de banco de dados
+- **Clean Architecture**: Separação de responsabilidades
+- **Pattern Repository**: Abstração do acesso a dados
+- **MVC**: Organização do código em camadas
+- **PDO**: Acesso seguro ao banco de dados
+
+### 📚 Documentação
+- **README Completo**: Instruções de instalação e uso
+- **Scripts de Setup**: Configuração automática do ambiente
+- **Comandos Composer**: Scripts para facilitar o desenvolvimento
 
 ---
+
+## 🔗 Links Úteis
+
+- [README Principal](README.md)
+- [Documentação da API](docs/API.md)
+- [Melhorias Implementadas](MELHORIAS-IMPLEMENTADAS.md)
+
+## 📋 Notas de Versão
+
+### v2.0.0
+Esta versão representa uma evolução significativa do projeto, transformando-o de um sistema básico de CRUD para uma aplicação profissional com API REST, sistema de logs, cache e testes automatizados. As melhorias focam em qualidade de código, segurança e escalabilidade.
+
+### v1.5.0
+Foco na experiência do usuário e organização do projeto. Adição de funcionalidades importantes como edição de alunos e busca avançada, além da consolidação da documentação.
+
+### v1.0.0
+Versão inicial do projeto com funcionalidades básicas de CRUD e interface web funcional.
 
 ## 📋 Convenções
 
