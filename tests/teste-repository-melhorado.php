@@ -36,8 +36,8 @@ echo "2. Testando listagem de todos os alunos...\n";
 $allStudents = $repository->allStudents();
 echo "Total de alunos encontrados: " . count($allStudents) . "\n";
 
-foreach ($allStudents as $studentData) {
-    echo "- ID: {$studentData['id']}, Nome: {$studentData['name']}, Nascimento: {$studentData['birth_date']}\n";
+foreach ($allStudents as $student) {
+    echo "- ID: {$student->id()}, Nome: {$student->name()}, Nascimento: {$student->birthDate()->format('Y-m-d')}\n";
 }
 echo "\n";
 
@@ -47,8 +47,8 @@ $birthDate = new \DateTimeImmutable('1990-05-15');
 $studentsByBirth = $repository->studentsBirthAt($birthDate);
 echo "Alunos nascidos em 1990-05-15: " . count($studentsByBirth) . "\n";
 
-foreach ($studentsByBirth as $studentData) {
-    echo "- ID: {$studentData['id']}, Nome: {$studentData['name']}\n";
+foreach ($studentsByBirth as $student) {
+    echo "- ID: {$student->id()}, Nome: {$student->name()}\n";
 }
 echo "\n";
 
@@ -57,7 +57,7 @@ echo "4. Testando atualização de aluno...\n";
 if (!empty($allStudents)) {
     $firstStudent = $allStudents[0];
     $studentToUpdate = new Student(
-        $firstStudent['id'],
+        $firstStudent->id(),
         'João Silva Atualizado',
         new \DateTimeImmutable('1990-05-15')
     );
@@ -67,9 +67,9 @@ if (!empty($allStudents)) {
     
     // Verificar se foi atualizado
     $updatedStudents = $repository->allStudents();
-    foreach ($updatedStudents as $studentData) {
-        if ($studentData['id'] == $firstStudent['id']) {
-            echo "Nome atualizado: {$studentData['name']}\n";
+    foreach ($updatedStudents as $student) {
+        if ($student->id() == $firstStudent->id()) {
+            echo "Nome atualizado: {$student->name()}\n";
             break;
         }
     }
@@ -79,7 +79,7 @@ echo "\n";
 // Teste 5: Remover um aluno
 echo "5. Testando remoção de aluno...\n";
 if (!empty($allStudents)) {
-    $studentToRemove = new Student($allStudents[0]['id'], '', new \DateTimeImmutable());
+    $studentToRemove = new Student($allStudents[0]->id(), '', new \DateTimeImmutable());
     $removeResult = $repository->remove($studentToRemove);
     echo "Remoção: " . ($removeResult ? "SUCESSO" : "FALHA") . "\n";
     
