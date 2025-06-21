@@ -4,6 +4,13 @@ $data = require_once 'bootstrap.php';
 $message = $data['message'];
 $error = $data['error'];
 $students = $data['students'];
+$searchResults = $data['searchResults'] ?? [];
+$isSearch = isset($_POST['action']) && $_POST['action'] === 'search';
+
+// Se foi uma busca, usar os resultados da busca na tabela principal
+if ($isSearch && !empty($searchResults)) {
+    $students = $searchResults;
+}
 ?>
 
 <!DOCTYPE html>
@@ -22,18 +29,18 @@ $students = $data['students'];
         </div>
         
         <div class="content">
-            <?php if ($message): ?>
+            <?php if ($message && !$isSearch): ?>
                 <div class="message success"><?= htmlspecialchars($message) ?></div>
             <?php endif; ?>
             
-            <?php if ($error): ?>
+            <?php if ($error && !$isSearch): ?>
                 <div class="message error"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
             
             <div class="stats">
                 <div class="stat-card">
                     <div class="stat-number"><?= count($students) ?></div>
-                    <div class="stat-label">Total de Alunos</div>
+                    <div class="stat-label"><?= $isSearch ? 'Alunos Encontrados' : 'Total de Alunos' ?></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number"><?= count(array_filter($students, fn($s) => $s->age() >= 18)) ?></div>
@@ -46,38 +53,85 @@ $students = $data['students'];
             </div>
             
             <div class="section">
-                <h2>➕ Inserir Novo Aluno</h2>
-                <form method="POST">
-                    <input type="hidden" name="action" value="insert">
-                    <div class="form-group">
-                        <label for="name">Nome do Aluno:</label>
-                        <input type="text" id="name" name="name" required placeholder="Digite o nome completo">
-                    </div>
-                    <div class="form-group">
-                        <label for="birth_date">Data de Nascimento:</label>
-                        <input type="date" id="birth_date" name="birth_date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="cep">CEP:</label>
-                        <div class="cep-group">
-                            <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9">
-                            <button type="button" id="buscar_cep" class="btn btn-secondary">🔍 Buscar</button>
+                <div class="tabs">
+                    <button class="tab-button <?= !$isSearch ? 'active' : '' ?>" data-tab="insert">➕ Inserir Novo Aluno</button>
+                    <button class="tab-button <?= $isSearch ? 'active' : '' ?>" data-tab="search">🔍 Buscar Aluno</button>
+                </div>
+                
+                <!-- Aba de Inserir Aluno -->
+                <div class="tab-content <?= !$isSearch ? 'active' : '' ?>" id="insert-tab">
+                    <h2>➕ Inserir Novo Aluno</h2>
+                    <form method="POST">
+                        <input type="hidden" name="action" value="insert">
+                        <div class="form-group">
+                            <label for="name">Nome do Aluno:</label>
+                            <input type="text" id="name" name="name" required placeholder="Digite o nome completo">
                         </div>
-                        <small>Digite o CEP para buscar o endereço automaticamente</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Endereço:</label>
-                        <input type="text" id="address" name="address" placeholder="Endereço completo">
-                        <small>Será preenchido automaticamente ao buscar o CEP</small>
-                    </div>
-                    <button type="submit" class="btn">Inserir Aluno</button>
-                </form>
+                        <div class="form-group">
+                            <label for="birth_date">Data de Nascimento:</label>
+                            <input type="date" id="birth_date" name="birth_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cep">CEP:</label>
+                            <div class="cep-group">
+                                <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9">
+                                <button type="button" id="buscar_cep" class="btn btn-secondary">🔍 Buscar</button>
+                            </div>
+                            <small>Digite o CEP para buscar o endereço automaticamente</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Endereço:</label>
+                            <input type="text" id="address" name="address" placeholder="Endereço completo">
+                            <small>Será preenchido automaticamente ao buscar o CEP</small>
+                        </div>
+                        <button type="submit" class="btn">Inserir Aluno</button>
+                    </form>
+                </div>
+                
+                <!-- Aba de Buscar Aluno -->
+                <div class="tab-content <?= $isSearch ? 'active' : '' ?>" id="search-tab">
+                    <h2>🔍 Buscar Aluno</h2>
+                    
+                    <?php if ($isSearch && $message): ?>
+                        <div class="message success"><?= htmlspecialchars($message) ?></div>
+                    <?php endif; ?>
+                    
+                    <?php if ($isSearch && $error): ?>
+                        <div class="message error"><?= htmlspecialchars($error) ?></div>
+                    <?php endif; ?>
+                    
+                    <form method="POST" id="search-form">
+                        <input type="hidden" name="action" value="search">
+                        <div class="form-group">
+                            <label for="search_type">Tipo de Busca:</label>
+                            <select id="search_type" name="search_type" required>
+                                <option value="">Selecione o tipo de busca</option>
+                                <option value="name" <?= (isset($_POST['search_type']) && $_POST['search_type'] === 'name') ? 'selected' : '' ?>>Por Nome</option>
+                                <option value="id" <?= (isset($_POST['search_type']) && $_POST['search_type'] === 'id') ? 'selected' : '' ?>>Por ID</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="search_term">Termo de Busca:</label>
+                            <input type="text" id="search_term" name="search_term" 
+                                   value="<?= htmlspecialchars($_POST['search_term'] ?? '') ?>" 
+                                   placeholder="Digite o nome ou ID do aluno" required>
+                        </div>
+                        <div class="search-buttons">
+                            <button type="submit" class="btn">🔍 Buscar</button>
+                            <?php if ($isSearch): ?>
+                                <a href="index.php" class="btn btn-secondary">🔄 Limpar Busca</a>
+                            <?php endif; ?>
+                        </div>
+                    </form>
+                </div>
             </div>
             
             <div class="section">
-                <h2>📋 Lista de Alunos</h2>
+                <h2>📋 Lista de Alunos <?= $isSearch ? '<span class="search-indicator">(Resultados da Busca)</span>' : '' ?></h2>
                 <?php if (empty($students)): ?>
-                    <p style="text-align: center; color: #666; padding: 40px;">Nenhum aluno cadastrado ainda.</p>
+                    <p style="text-align: center; color: #666; padding: 40px;">
+                        <?= $isSearch ? 'Nenhum aluno encontrado com os critérios informados.' : 'Nenhum aluno cadastrado ainda.' ?>
+                    </p>
                 <?php else: ?>
                     <table class="students-table">
                         <thead>
@@ -119,6 +173,24 @@ $students = $data['students'];
     <script>
         // Definir data máxima como hoje para o campo de data de nascimento
         document.getElementById('birth_date').max = new Date().toISOString().split('T')[0];
+        
+        // Sistema de abas
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.getAttribute('data-tab');
+                
+                // Remove active de todos os botões e conteúdos
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Adiciona active ao botão clicado e conteúdo correspondente
+                button.classList.add('active');
+                document.getElementById(targetTab + '-tab').classList.add('active');
+            });
+        });
         
         // Máscara para CEP
         document.getElementById('cep').addEventListener('input', function(e) {
@@ -168,8 +240,24 @@ $students = $data['students'];
             });
         });
         
-        // Auto-refresh após operações
-        <?php if ($message || $error): ?>
+        // Validação do formulário de busca
+        document.getElementById('search_type').addEventListener('change', function() {
+            const searchTerm = document.getElementById('search_term');
+            const searchType = this.value;
+            
+            if (searchType === 'id') {
+                searchTerm.placeholder = 'Digite o ID do aluno (número)';
+                searchTerm.type = 'number';
+                searchTerm.min = '1';
+            } else if (searchType === 'name') {
+                searchTerm.placeholder = 'Digite o nome do aluno';
+                searchTerm.type = 'text';
+                searchTerm.removeAttribute('min');
+            }
+        });
+        
+        // Auto-refresh apenas para operações de inserção e exclusão (não busca)
+        <?php if (($message || $error) && !$isSearch): ?>
         setTimeout(() => {
             window.location.href = window.location.pathname;
         }, 2000);

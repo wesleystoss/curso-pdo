@@ -58,6 +58,51 @@ class PdoStudentRepository implements StudentRepository
         return $studentList;
     }
 
+    public function findById(int $id): ?Student
+    {
+        $sql = 'SELECT * FROM students WHERE id = ?';
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindValue(1, $id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $studentData = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($studentData) {
+            return new Student(
+                $studentData['id'],
+                $studentData['name'],
+                new \DateTimeImmutable($studentData['birth_date']),
+                $studentData['cep'] ?? '',
+                $studentData['address'] ?? ''
+            );
+        }
+        
+        return null;
+    }
+
+    public function findByName(string $name): array
+    {
+        $sql = 'SELECT * FROM students WHERE name LIKE ? ORDER BY name';
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindValue(1, '%' . $name . '%');
+        $stmt->execute();
+        
+        $studentDataList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $studentList = [];
+        foreach ($studentDataList as $studentData) {
+            $studentList[] = new Student(
+                $studentData['id'],
+                $studentData['name'],
+                new \DateTimeImmutable($studentData['birth_date']),
+                $studentData['cep'] ?? '',
+                $studentData['address'] ?? ''
+            );
+        }
+        
+        return $studentList;
+    }
+
     public function save(Student $student): bool
     {
         if ($student->id() === null) {

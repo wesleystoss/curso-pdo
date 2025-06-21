@@ -22,6 +22,7 @@ class StudentController
         $message = '';
         $error = '';
         $students = [];
+        $searchResults = [];
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $action = $_POST['action'] ?? '';
@@ -35,6 +36,13 @@ class StudentController
                     
                 case 'delete':
                     $result = $this->deleteStudent();
+                    $message = $result['message'];
+                    $error = $result['error'];
+                    break;
+                    
+                case 'search':
+                    $result = $this->searchStudents();
+                    $searchResults = $result['results'];
                     $message = $result['message'];
                     $error = $result['error'];
                     break;
@@ -57,7 +65,8 @@ class StudentController
         return [
             'message' => $message,
             'error' => $error,
-            'students' => $students
+            'students' => $students,
+            'searchResults' => $searchResults
         ];
     }
     
@@ -94,6 +103,53 @@ class StudentController
             return ['message' => '', 'error' => 'ID inválido'];
         } catch (\Exception $e) {
             return ['message' => '', 'error' => 'Erro ao excluir aluno: ' . $e->getMessage()];
+        }
+    }
+    
+    private function searchStudents(): array
+    {
+        try {
+            $searchType = $_POST['search_type'] ?? '';
+            $searchTerm = trim($_POST['search_term'] ?? '');
+            
+            if (empty($searchType) || empty($searchTerm)) {
+                return [
+                    'results' => [],
+                    'message' => '',
+                    'error' => 'Tipo de busca e termo são obrigatórios!'
+                ];
+            }
+            
+            $results = [];
+            
+            if ($searchType === 'id') {
+                $id = (int)$searchTerm;
+                if ($id > 0) {
+                    $student = $this->repository->findById($id);
+                    if ($student) {
+                        $results[] = $student;
+                    }
+                }
+            } elseif ($searchType === 'name') {
+                $results = $this->repository->findByName($searchTerm);
+            }
+            
+            $message = count($results) > 0 
+                ? 'Busca realizada com sucesso! ' . count($results) . ' aluno(s) encontrado(s).'
+                : 'Nenhum aluno encontrado com os critérios informados.';
+            
+            return [
+                'results' => $results,
+                'message' => $message,
+                'error' => ''
+            ];
+            
+        } catch (\Exception $e) {
+            return [
+                'results' => [],
+                'message' => '',
+                'error' => 'Erro ao buscar alunos: ' . $e->getMessage()
+            ];
         }
     }
     
