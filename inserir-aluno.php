@@ -1,16 +1,25 @@
 <?php
 
 use Alura\Pdo\Domain\Model\Student;
+use Alura\Pdo\Infrastructure\Persistence\ConnectionCreator;
 
 require_once 'vendor/autoload.php';
 
-$databasePath = __DIR__ . '/banco.sqlite';
-$pdo = new PDO('sqlite:' . $databasePath);
+$pdo = ConnectionCreator::createConnection();
 
-$student = new Student(null, 'Vinicius Dias', new \DateTimeImmutable('1997-10-15'));
+$student = new Student(
+    id: null,
+    name: "Patrícia ' Freitas",
+    birthDate: new \DateTimeImmutable('1986-10-25')
+);
 
-$sqlInsert = "INSERT INTO students (name, birth_date) VALUES ('{$student->name()}', '{$student->birthDate()->format('Y-m-d')}');";
+$sqlInsert = "INSERT INTO students (name, birth_date) VALUES (?, ?);";
+$statement = $pdo->prepare($sqlInsert);
+$statement->bindValue(1, $student->name());
+$statement->bindValue(2, $student->birthDate()->format('Y-m-d'));
 
-echo $sqlInsert . PHP_EOL;
-
-var_dump($pdo->exec($sqlInsert));
+if ($statement->execute()) {
+    echo "Aluno incluído" . PHP_EOL;
+} else {
+    echo "Erro ao incluir aluno" . PHP_EOL;
+}

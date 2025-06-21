@@ -10,4 +10,4 @@ $pdo = new PDO('sqlite:' . $databasePath);
 $statement = $pdo->query('DELETE FROM students');
 $statement->execute();
 
-echo "Todos os alunos foram excluídos com sucesso!";
+echo "Todos os alunos foram excluídos com sucesso!" . PHP_EOL;

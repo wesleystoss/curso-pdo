@@ -6,5 +6,11 @@
     },
     "require": {
         "ext-pdo": "*"
+    },
+    "scripts": {
+        "listar": "php lista-alunos.php",
+        "inserir": "php inserir-aluno.php",
+        "excluir": "php excluir-aluno.php",
+        "git-deploy": "git add . && git commit -m \"$(read -p 'Digite a mensagem do commit: ' message && echo $message)\" && git push -u origin dev && echo \"Deploy realizado com sucesso\""
     }
 }
