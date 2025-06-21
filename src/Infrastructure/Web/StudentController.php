@@ -237,30 +237,33 @@ class StudentController
     private function searchStudents(): array
     {
         try {
-            $searchType = $_POST['search_type'] ?? '';
-            $searchTerm = trim($_POST['search_term'] ?? '');
+            $searchId = trim($_POST['search_id'] ?? '');
+            $searchName = trim($_POST['search_name'] ?? '');
+            $searchCep = trim($_POST['search_cep'] ?? '');
             
-            if (empty($searchType) || empty($searchTerm)) {
+            // Converter ID para inteiro se fornecido
+            $id = null;
+            if (!empty($searchId)) {
+                $id = (int)$searchId;
+                if ($id <= 0) {
+                    return [
+                        'results' => [],
+                        'message' => '',
+                        'error' => 'ID deve ser um número positivo!'
+                    ];
+                }
+            }
+            
+            // Verificar se pelo menos um critério foi fornecido
+            if (empty($searchId) && empty($searchName) && empty($searchCep)) {
                 return [
                     'results' => [],
                     'message' => '',
-                    'error' => 'Tipo de busca e termo são obrigatórios!'
+                    'error' => 'Informe pelo menos um critério de busca (ID, Nome ou CEP)!'
                 ];
             }
             
-            $results = [];
-            
-            if ($searchType === 'id') {
-                $id = (int)$searchTerm;
-                if ($id > 0) {
-                    $student = $this->repository->findById($id);
-                    if ($student) {
-                        $results[] = $student;
-                    }
-                }
-            } elseif ($searchType === 'name') {
-                $results = $this->repository->findByName($searchTerm);
-            }
+            $results = $this->repository->findByCriteria($id, $searchName, $searchCep);
             
             $message = count($results) > 0 
                 ? 'Busca realizada com sucesso! ' . count($results) . ' aluno(s) encontrado(s).'

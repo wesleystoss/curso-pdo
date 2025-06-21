@@ -76,7 +76,6 @@ if ($isSearch && !empty($searchResults)) {
                             <label for="cep">CEP:</label>
                             <div class="cep-group">
                                 <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9">
-                                <button type="button" id="buscar_cep" class="btn btn-secondary">🔍 Buscar</button>
                             </div>
                             <small>Digite o CEP para buscar o endereço automaticamente</small>
                         </div>
@@ -104,18 +103,22 @@ if ($isSearch && !empty($searchResults)) {
                     <form method="POST" id="search-form">
                         <input type="hidden" name="action" value="search">
                         <div class="form-group">
-                            <label for="search_type">Tipo de Busca:</label>
-                            <select id="search_type" name="search_type" required>
-                                <option value="">Selecione o tipo de busca</option>
-                                <option value="name" <?= (isset($_POST['search_type']) && $_POST['search_type'] === 'name') ? 'selected' : '' ?>>Por Nome</option>
-                                <option value="id" <?= (isset($_POST['search_type']) && $_POST['search_type'] === 'id') ? 'selected' : '' ?>>Por ID</option>
-                            </select>
+                            <label for="search_id">ID do Aluno:</label>
+                            <input type="number" id="search_id" name="search_id" 
+                                   value="<?= htmlspecialchars($_POST['search_id'] ?? '') ?>" 
+                                   placeholder="Digite o ID do aluno" min="1">
                         </div>
                         <div class="form-group">
-                            <label for="search_term">Termo de Busca:</label>
-                            <input type="text" id="search_term" name="search_term" 
-                                   value="<?= htmlspecialchars($_POST['search_term'] ?? '') ?>" 
-                                   placeholder="Digite o nome ou ID do aluno" required>
+                            <label for="search_name">Nome do Aluno:</label>
+                            <input type="text" id="search_name" name="search_name" 
+                                   value="<?= htmlspecialchars($_POST['search_name'] ?? '') ?>" 
+                                   placeholder="Digite o nome do aluno">
+                        </div>
+                        <div class="form-group">
+                            <label for="search_cep">CEP:</label>
+                            <input type="text" id="search_cep" name="search_cep" 
+                                   value="<?= htmlspecialchars($_POST['search_cep'] ?? '') ?>" 
+                                   placeholder="00000-000" maxlength="9">
                         </div>
                         <div class="search-buttons">
                             <button type="submit" class="btn">🔍 Buscar</button>
@@ -283,7 +286,6 @@ if ($isSearch && !empty($searchResults)) {
                     <label for="edit_cep">CEP:</label>
                     <div class="cep-group">
                         <input type="text" id="edit_cep" name="cep" placeholder="00000-000" maxlength="9">
-                        <button type="button" id="edit_buscar_cep" class="btn btn-secondary">🔍 Buscar</button>
                     </div>
                     <small>Digite o CEP para buscar o endereço automaticamente</small>
                 </div>
@@ -329,24 +331,25 @@ if ($isSearch && !empty($searchResults)) {
                 value = value.substring(0, 5) + '-' + value.substring(5, 8);
             }
             e.target.value = value;
+            
+            // Busca automática quando o CEP estiver completo
+            if (value.length === 9) {
+                buscarCepAutomaticamente(value, 'address');
+            }
         });
         
-        // Buscar CEP
-        document.getElementById('buscar_cep').addEventListener('click', function() {
-            const cep = document.getElementById('cep').value.replace(/\D/g, '');
-            const addressField = document.getElementById('address');
+        // Função para buscar CEP automaticamente
+        function buscarCepAutomaticamente(cep, targetFieldId) {
+            const addressField = document.getElementById(targetFieldId);
+            const cepLimpo = cep.replace(/\D/g, '');
             
-            if (cep.length !== 8) {
-                alert('Digite um CEP válido (8 dígitos)');
+            if (cepLimpo.length !== 8) {
                 return;
             }
             
-            this.disabled = true;
-            this.textContent = '🔍 Buscando...';
-            
             const formData = new FormData();
             formData.append('action', 'buscar_cep');
-            formData.append('cep', cep);
+            formData.append('cep', cepLimpo);
             
             fetch(window.location.href, {
                 method: 'POST',
@@ -356,34 +359,20 @@ if ($isSearch && !empty($searchResults)) {
             .then(data => {
                 if (data.success) {
                     addressField.value = data.endereco;
-                    alert('Endereço encontrado e preenchido automaticamente!');
-                } else {
-                    alert('Erro: ' + data.message);
                 }
             })
             .catch(error => {
-                alert('Erro ao buscar CEP: ' + error.message);
-            })
-            .finally(() => {
-                this.disabled = false;
-                this.textContent = '🔍 Buscar';
+                console.error('Erro ao buscar CEP:', error);
             });
-        });
+        }
         
-        // Validação do formulário de busca
-        document.getElementById('search_type').addEventListener('change', function() {
-            const searchTerm = document.getElementById('search_term');
-            const searchType = this.value;
-            
-            if (searchType === 'id') {
-                searchTerm.placeholder = 'Digite o ID do aluno (número)';
-                searchTerm.type = 'number';
-                searchTerm.min = '1';
-            } else if (searchType === 'name') {
-                searchTerm.placeholder = 'Digite o nome do aluno';
-                searchTerm.type = 'text';
-                searchTerm.removeAttribute('min');
+        // Máscara para CEP na busca
+        document.getElementById('search_cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) {
+                value = value.substring(0, 5) + '-' + value.substring(5, 8);
             }
+            e.target.value = value;
         });
         
         // Sistema de seleção múltipla
@@ -489,45 +478,11 @@ if ($isSearch && !empty($searchResults)) {
                 value = value.substring(0, 5) + '-' + value.substring(5, 8);
             }
             e.target.value = value;
-        });
-        
-        // Buscar CEP na modal
-        document.getElementById('edit_buscar_cep').addEventListener('click', function() {
-            const cep = document.getElementById('edit_cep').value.replace(/\D/g, '');
-            const addressField = document.getElementById('edit_address');
             
-            if (cep.length !== 8) {
-                alert('Digite um CEP válido (8 dígitos)');
-                return;
+            // Busca automática quando o CEP estiver completo
+            if (value.length === 9) {
+                buscarCepAutomaticamente(value, 'edit_address');
             }
-            
-            this.disabled = true;
-            this.textContent = '🔍 Buscando...';
-            
-            const formData = new FormData();
-            formData.append('action', 'buscar_cep');
-            formData.append('cep', cep);
-            
-            fetch(window.location.href, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    addressField.value = data.endereco;
-                    alert('Endereço encontrado e preenchido automaticamente!');
-                } else {
-                    alert('Erro: ' + data.message);
-                }
-            })
-            .catch(error => {
-                alert('Erro ao buscar CEP: ' + error.message);
-            })
-            .finally(() => {
-                this.disabled = false;
-                this.textContent = '🔍 Buscar';
-            });
         });
     </script>
 </body>

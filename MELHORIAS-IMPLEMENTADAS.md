@@ -192,4 +192,124 @@ composer run server:start
 
 ---
 
-**🎉 Projeto completamente funcional e organizado seguindo as melhores práticas!** 
+**🎉 Projeto completamente funcional e organizado seguindo as melhores práticas!**
+
+## Funcionalidades Implementadas
+
+### 1. Busca Automática de CEP
+- **Funcionalidade**: Ao digitar um CEP completo (8 dígitos), o sistema automaticamente busca e preenche o endereço
+- **Implementação**: 
+  - Removido botão "Buscar" do CEP
+  - Busca automática quando o CEP atinge 9 caracteres (incluindo hífen)
+  - Sem mensagens de alerta - apenas preenchimento silencioso do campo
+- **Locais aplicados**: Formulário de inserção e modal de edição
+
+### 2. Busca Cumulativa de Alunos
+- **Funcionalidade**: Sistema de busca com 3 campos independentes que funcionam de forma cumulativa
+- **Campos disponíveis**:
+  - **ID**: Busca por ID específico do aluno
+  - **Nome**: Busca por nome (busca parcial com LIKE)
+  - **CEP**: Busca por CEP (busca parcial com LIKE)
+- **Comportamento**: 
+  - Os campos são cumulativos (AND lógico)
+  - Pelo menos um campo deve ser preenchido
+  - Resultados ordenados por nome
+- **Implementação**:
+  - Novo método `findByCriteria()` no repositório
+  - Interface atualizada com o novo método
+  - Controller modificado para usar busca cumulativa
+
+### 3. Melhorias na Interface
+- **Formulário de busca simplificado**: Removido dropdown de tipo de busca
+- **Campos independentes**: Cada critério de busca tem seu próprio campo
+- **Validação melhorada**: Verificação se pelo menos um critério foi informado
+- **Máscara de CEP**: Aplicada em todos os campos de CEP (inserção, edição e busca)
+
+## Arquivos Modificados
+
+### 1. Interface do Repositório
+- `src/Domain/Repository/StudentRepository.php`
+  - Adicionado método `findByCriteria(?int $id = null, ?string $name = null, ?string $cep = null): array`
+
+### 2. Implementação do Repositório
+- `src/Infrastructure/Repository/PdoStudentRepository.php`
+  - Implementado método `findByCriteria()` com busca cumulativa
+  - Construção dinâmica de queries SQL com condições AND
+
+### 3. Controller
+- `src/Infrastructure/Web/StudentController.php`
+  - Método `searchStudents()` atualizado para usar busca cumulativa
+  - Validação de ID como número positivo
+  - Verificação de pelo menos um critério preenchido
+
+### 4. Interface do Usuário
+- `public/index.php`
+  - Removido botão "Buscar" do CEP
+  - Formulário de busca atualizado com 3 campos independentes
+  - JavaScript atualizado para busca automática de CEP
+  - Removidas funções relacionadas aos botões de busca de CEP
+
+## Funcionalidades Técnicas
+
+### Busca Automática de CEP
+```javascript
+// Busca automática quando o CEP estiver completo
+if (value.length === 9) {
+    buscarCepAutomaticamente(value, 'address');
+}
+```
+
+### Busca Cumulativa no Repositório
+```php
+public function findByCriteria(?int $id = null, ?string $name = null, ?string $cep = null): array
+{
+    $conditions = [];
+    $params = [];
+    
+    if ($id !== null) {
+        $conditions[] = 'id = ?';
+        $params[] = $id;
+    }
+    
+    if ($name !== null && trim($name) !== '') {
+        $conditions[] = 'name LIKE ?';
+        $params[] = '%' . trim($name) . '%';
+    }
+    
+    if ($cep !== null && trim($cep) !== '') {
+        $conditions[] = 'cep LIKE ?';
+        $params[] = '%' . trim($cep) . '%';
+    }
+    
+    // Construção da query dinâmica
+    $sql = 'SELECT * FROM students WHERE ' . implode(' AND ', $conditions) . ' ORDER BY name';
+}
+```
+
+## Benefícios das Melhorias
+
+1. **Experiência do Usuário**: Busca de CEP mais fluida e intuitiva
+2. **Flexibilidade**: Busca de alunos mais poderosa e flexível
+3. **Performance**: Busca cumulativa otimizada com uma única query
+4. **Usabilidade**: Interface mais limpa e direta
+5. **Manutenibilidade**: Código mais organizado e modular
+
+## Como Usar
+
+### Busca de CEP
+1. Digite o CEP no campo correspondente
+2. Quando completar 8 dígitos, o endereço será preenchido automaticamente
+3. Não há necessidade de clicar em botões
+
+### Busca de Alunos
+1. Preencha um ou mais campos de busca:
+   - **ID**: Número específico do aluno
+   - **Nome**: Nome ou parte do nome
+   - **CEP**: CEP ou parte do CEP
+2. Clique em "Buscar"
+3. Os resultados mostrarão alunos que atendem a TODOS os critérios preenchidos
+
+## Compatibilidade
+- Todas as funcionalidades existentes foram mantidas
+- Banco de dados não foi modificado
+- Compatível com a estrutura atual do projeto 
