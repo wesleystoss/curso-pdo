@@ -1,55 +1,9 @@
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
 
-use Alura\Pdo\Domain\Model\Student;
-use Alura\Pdo\Infrastructure\Persistence\ConnectionCreator;
-use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
-
-$connection = ConnectionCreator::createConnection();
-$repository = new PdoStudentRepository($connection);
-
-$message = '';
-$error = '';
-
-// Processar formulário de inserção
-if ($_POST['action'] ?? '' === 'insert') {
-    try {
-        $name = $_POST['name'] ?? '';
-        $birthDate = $_POST['birth_date'] ?? '';
-        
-        if (empty($name) || empty($birthDate)) {
-            $error = 'Nome e data de nascimento são obrigatórios!';
-        } else {
-            $student = new Student(null, $name, new DateTimeImmutable($birthDate));
-            $repository->save($student);
-            $message = 'Aluno inserido com sucesso!';
-        }
-    } catch (Exception $e) {
-        $error = 'Erro ao inserir aluno: ' . $e->getMessage();
-    }
-}
-
-// Processar exclusão
-if ($_POST['action'] ?? '' === 'delete') {
-    try {
-        $id = (int)($_POST['id'] ?? 0);
-        if ($id > 0) {
-            $student = new Student($id, '', new DateTimeImmutable());
-            $repository->remove($student);
-            $message = 'Aluno excluído com sucesso!';
-        }
-    } catch (Exception $e) {
-        $error = 'Erro ao excluir aluno: ' . $e->getMessage();
-    }
-}
-
-// Buscar todos os alunos
-try {
-    $students = $repository->allStudents();
-} catch (Exception $e) {
-    $error = 'Erro ao buscar alunos: ' . $e->getMessage();
-    $students = [];
-}
+$data = require_once 'bootstrap.php';
+$message = $data['message'];
+$error = $data['error'];
+$students = $data['students'];
 ?>
 
 <!DOCTYPE html>
@@ -157,4 +111,4 @@ try {
         <?php endif; ?>
     </script>
 </body>
-</html> 
+</html>
