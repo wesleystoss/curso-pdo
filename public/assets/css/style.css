@@ -75,6 +75,16 @@ input[type="text"]:focus, input[type="date"]:focus {
     border-color: #667eea;
 }
 
+.cep-group {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.cep-group input {
+    flex: 1;
+}
+
 .btn {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -91,8 +101,27 @@ input[type="text"]:focus, input[type="date"]:focus {
     transform: translateY(-2px);
 }
 
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    padding: 12px 15px;
+    white-space: nowrap;
+}
+
 .btn-danger {
     background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+}
+
+small {
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: block;
 }
 
 .message {
@@ -200,13 +229,22 @@ input[type="text"]:focus, input[type="date"]:focus {
         grid-template-columns: 1fr;
     }
     
+    .cep-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .cep-group input {
+        width: 100%;
+    }
+    
     .students-table {
         font-size: 14px;
     }
     
     .students-table th,
     .students-table td {
-        padding: 10px;
+        padding: 10px 8px;
     }
 }
 
@@ -220,7 +258,7 @@ input[type="text"]:focus, input[type="date"]:focus {
     }
     
     .header h1 {
-        font-size: 1.5em;
+        font-size: 1.8em;
     }
     
     .btn {

@@ -4,14 +4,17 @@ namespace Alura\Pdo\Infrastructure\Web;
 
 use Alura\Pdo\Domain\Model\Student;
 use Alura\Pdo\Domain\Repository\StudentRepository;
+use Alura\Pdo\Infrastructure\Service\CepService;
 
 class StudentController
 {
     private StudentRepository $repository;
+    private CepService $cepService;
     
     public function __construct(StudentRepository $repository)
     {
         $this->repository = $repository;
+        $this->cepService = new CepService();
     }
     
     public function handleRequest(): array
@@ -35,6 +38,12 @@ class StudentController
                     $message = $result['message'];
                     $error = $result['error'];
                     break;
+                    
+                case 'buscar_cep':
+                    $result = $this->buscarCep();
+                    header('Content-Type: application/json');
+                    echo json_encode($result);
+                    exit;
             }
         }
         
@@ -57,12 +66,14 @@ class StudentController
         try {
             $name = $_POST['name'] ?? '';
             $birthDate = $_POST['birth_date'] ?? '';
+            $cep = $_POST['cep'] ?? '';
+            $address = $_POST['address'] ?? '';
             
             if (empty($name) || empty($birthDate)) {
                 return ['message' => '', 'error' => 'Nome e data de nascimento são obrigatórios!'];
             }
             
-            $student = new Student(null, $name, new \DateTimeImmutable($birthDate));
+            $student = new Student(null, $name, new \DateTimeImmutable($birthDate), $cep, $address);
             $this->repository->save($student);
             
             return ['message' => 'Aluno inserido com sucesso!', 'error' => ''];
@@ -83,6 +94,27 @@ class StudentController
             return ['message' => '', 'error' => 'ID inválido'];
         } catch (\Exception $e) {
             return ['message' => '', 'error' => 'Erro ao excluir aluno: ' . $e->getMessage()];
+        }
+    }
+    
+    private function buscarCep(): array
+    {
+        $cep = $_POST['cep'] ?? '';
+        
+        if (empty($cep)) {
+            return ['success' => false, 'message' => 'CEP não informado'];
+        }
+        
+        $endereco = $this->cepService->buscarEndereco($cep);
+        
+        if ($endereco) {
+            return [
+                'success' => true,
+                'endereco' => $endereco['endereco_completo'],
+                'dados' => $endereco
+            ];
+        } else {
+            return ['success' => false, 'message' => 'CEP não encontrado'];
         }
     }
 }

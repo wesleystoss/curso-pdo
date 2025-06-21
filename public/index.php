@@ -57,6 +57,19 @@ $students = $data['students'];
                         <label for="birth_date">Data de Nascimento:</label>
                         <input type="date" id="birth_date" name="birth_date" required>
                     </div>
+                    <div class="form-group">
+                        <label for="cep">CEP:</label>
+                        <div class="cep-group">
+                            <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9">
+                            <button type="button" id="buscar_cep" class="btn btn-secondary">🔍 Buscar</button>
+                        </div>
+                        <small>Digite o CEP para buscar o endereço automaticamente</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Endereço:</label>
+                        <input type="text" id="address" name="address" placeholder="Endereço completo">
+                        <small>Será preenchido automaticamente ao buscar o CEP</small>
+                    </div>
                     <button type="submit" class="btn">Inserir Aluno</button>
                 </form>
             </div>
@@ -73,6 +86,8 @@ $students = $data['students'];
                                 <th>Nome</th>
                                 <th>Data de Nascimento</th>
                                 <th>Idade</th>
+                                <th>CEP</th>
+                                <th>Endereço</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
@@ -83,6 +98,8 @@ $students = $data['students'];
                                     <td><?= htmlspecialchars($student->name()) ?></td>
                                     <td><?= $student->birthDate()->format('d/m/Y') ?></td>
                                     <td><?= $student->age() ?> anos</td>
+                                    <td><?= htmlspecialchars($student->cep()) ?: '-' ?></td>
+                                    <td><?= htmlspecialchars($student->address()) ?: '-' ?></td>
                                     <td>
                                         <form method="POST" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir este aluno?')">
                                             <input type="hidden" name="action" value="delete">
@@ -102,6 +119,54 @@ $students = $data['students'];
     <script>
         // Definir data máxima como hoje para o campo de data de nascimento
         document.getElementById('birth_date').max = new Date().toISOString().split('T')[0];
+        
+        // Máscara para CEP
+        document.getElementById('cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) {
+                value = value.substring(0, 5) + '-' + value.substring(5, 8);
+            }
+            e.target.value = value;
+        });
+        
+        // Buscar CEP
+        document.getElementById('buscar_cep').addEventListener('click', function() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+            const addressField = document.getElementById('address');
+            
+            if (cep.length !== 8) {
+                alert('Digite um CEP válido (8 dígitos)');
+                return;
+            }
+            
+            this.disabled = true;
+            this.textContent = '🔍 Buscando...';
+            
+            const formData = new FormData();
+            formData.append('action', 'buscar_cep');
+            formData.append('cep', cep);
+            
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addressField.value = data.endereco;
+                    alert('Endereço encontrado e preenchido automaticamente!');
+                } else {
+                    alert('Erro: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Erro ao buscar CEP: ' + error.message);
+            })
+            .finally(() => {
+                this.disabled = false;
+                this.textContent = '🔍 Buscar';
+            });
+        });
         
         // Auto-refresh após operações
         <?php if ($message || $error): ?>
