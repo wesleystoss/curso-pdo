@@ -5,10 +5,10 @@ use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
 
 require_once 'vendor/autoload.php';
 
-echo "=== TESTE DO REPOSITORY ===\n\n";
+$pdo = new PDO('sqlite:banco.sqlite');
+$repository = new PdoStudentRepository($pdo);
 
-// Criar instância do repository
-$repository = new PdoStudentRepository();
+echo "=== TESTE DO REPOSITORY ===\n\n";
 
 // Teste 1: Inserir alunos
 echo "1. Testando inserção de alunos...\n";
