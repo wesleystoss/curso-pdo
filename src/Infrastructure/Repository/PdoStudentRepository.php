@@ -20,7 +20,18 @@ class PdoStudentRepository implements StudentRepository
     {
         $sql = 'SELECT * FROM students';
         $stmt = $this->connection->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $studentDataList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $studentList = [];
+        foreach ($studentDataList as $studentData) {
+            $studentList[] = new Student(
+                $studentData['id'],
+                $studentData['name'],
+                new \DateTimeImmutable($studentData['birth_date'])
+            );
+        }
+        
+        return $studentList;
     }
 
     public function studentsBirthAt(\DateTimeInterface $birthDate): array
@@ -29,7 +40,18 @@ class PdoStudentRepository implements StudentRepository
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue(1, $birthDate->format('Y-m-d'));
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $studentDataList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $studentList = [];
+        foreach ($studentDataList as $studentData) {
+            $studentList[] = new Student(
+                $studentData['id'],
+                $studentData['name'],
+                new \DateTimeImmutable($studentData['birth_date'])
+            );
+        }
+        
+        return $studentList;
     }
 
     public function save(Student $student): bool
