@@ -103,6 +103,58 @@ class PdoStudentRepository implements StudentRepository
         return $studentList;
     }
 
+    public function findByCriteria(?int $id = null, ?string $name = null, ?string $cep = null): array
+    {
+        $conditions = [];
+        $params = [];
+        $paramIndex = 1;
+        
+        if ($id !== null) {
+            $conditions[] = 'id = ?';
+            $params[] = $id;
+            $paramIndex++;
+        }
+        
+        if ($name !== null && trim($name) !== '') {
+            $conditions[] = 'name LIKE ?';
+            $params[] = '%' . trim($name) . '%';
+            $paramIndex++;
+        }
+        
+        if ($cep !== null && trim($cep) !== '') {
+            $conditions[] = 'cep LIKE ?';
+            $params[] = '%' . trim($cep) . '%';
+            $paramIndex++;
+        }
+        
+        if (empty($conditions)) {
+            return [];
+        }
+        
+        $sql = 'SELECT * FROM students WHERE ' . implode(' AND ', $conditions) . ' ORDER BY name';
+        $stmt = $this->connection->prepare($sql);
+        
+        foreach ($params as $index => $param) {
+            $stmt->bindValue($index + 1, $param);
+        }
+        
+        $stmt->execute();
+        $studentDataList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $studentList = [];
+        foreach ($studentDataList as $studentData) {
+            $studentList[] = new Student(
+                $studentData['id'],
+                $studentData['name'],
+                new \DateTimeImmutable($studentData['birth_date']),
+                $studentData['cep'] ?? '',
+                $studentData['address'] ?? ''
+            );
+        }
+        
+        return $studentList;
+    }
+
     public function save(Student $student): bool
     {
         if ($student->id() === null) {

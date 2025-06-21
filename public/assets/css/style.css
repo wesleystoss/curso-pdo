@@ -32,6 +32,11 @@ body {
     margin-bottom: 10px;
 }
 
+.header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
 .content {
     padding: 30px;
 }
@@ -102,30 +107,34 @@ body {
     margin-bottom: 20px;
 }
 
-label {
+.form-group label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #555;
+    color: #333;
 }
 
-input[type="text"], input[type="date"], input[type="number"], select {
+.form-group input,
+.form-group select {
     width: 100%;
     padding: 12px;
     border: 2px solid #ddd;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 1em;
     transition: border-color 0.3s;
 }
 
-input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, select:focus {
+.form-group input:focus,
+.form-group select:focus {
     outline: none;
     border-color: #667eea;
 }
 
-select {
-    background: white;
-    cursor: pointer;
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+    font-size: 0.85em;
 }
 
 .cep-group {
@@ -136,6 +145,10 @@ select {
 
 .cep-group input {
     flex: 1;
+}
+
+.cep-group button {
+    white-space: nowrap;
 }
 
 .search-buttons {
@@ -188,28 +201,21 @@ select {
     background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
 }
 
-small {
-    color: #666;
-    font-size: 0.85em;
-    margin-top: 5px;
-    display: block;
-}
-
 .message {
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 20px;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .message.success {
-    background: #d4edda;
+    background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
 }
 
 .message.error {
-    background: #f8d7da;
+    background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
@@ -219,29 +225,73 @@ small {
     font-size: 0.8em;
     color: #667eea;
     font-weight: normal;
-    font-style: italic;
 }
 
-/* Resultados de Busca */
-.search-results {
+/* Informações de paginação */
+.pagination-info {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.pagination-info p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* Sistema de paginação */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
     margin-top: 30px;
     padding: 20px;
     background: white;
     border-radius: 10px;
-    border: 1px solid #ddd;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.search-results h3 {
-    color: #333;
-    margin-bottom: 15px;
-    font-size: 1.3em;
+.pagination-numbers {
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }
 
-.no-results {
-    text-align: center;
+.pagination-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    text-decoration: none;
     color: #666;
-    padding: 40px;
-    font-style: italic;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.pagination-number:hover {
+    border-color: #667eea;
+    color: #667eea;
+    transform: translateY(-2px);
+}
+
+.pagination-number.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+}
+
+.pagination-ellipsis {
+    color: #666;
+    font-weight: bold;
+    padding: 0 10px;
 }
 
 .students-table {
@@ -362,6 +412,16 @@ small {
         width: 100%;
     }
     
+    .pagination {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .pagination-numbers {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
     .students-table {
         font-size: 14px;
     }
@@ -388,5 +448,216 @@ small {
     .btn {
         width: 100%;
         margin-bottom: 10px;
+    }
+    
+    .pagination-number {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+}
+
+/* Checkboxes personalizados */
+.checkbox-container {
+    display: inline-block;
+    position: relative;
+    padding-left: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    user-select: none;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 3px;
+    transition: all 0.2s;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    border-color: #667eea;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-container .checkmark:after {
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Cabeçalho da tabela com checkbox */
+.checkbox-header {
+    width: 50px;
+    text-align: center;
+}
+
+.checkbox-cell {
+    width: 50px;
+    text-align: center;
+}
+
+/* Controles de seleção múltipla */
+.bulk-actions {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.bulk-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.bulk-controls .checkbox-container {
+    margin-right: 15px;
+}
+
+/* Modal de Edição */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.close {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.close:hover {
+    opacity: 0.7;
+}
+
+.modal form {
+    padding: 25px;
+}
+
+.modal-footer {
+    padding: 20px 25px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.modal-footer .btn {
+    min-width: 120px;
+}
+
+/* Botão primário para editar */
+.btn-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+}
+
+/* Responsividade da modal */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+    
+    .modal-header {
+        padding: 15px 20px;
+    }
+    
+    .modal form {
+        padding: 20px;
+    }
+    
+    .modal-footer {
+        padding: 15px 20px;
+        flex-direction: column;
+    }
+    
+    .modal-footer .btn {
+        width: 100%;
     }
 }

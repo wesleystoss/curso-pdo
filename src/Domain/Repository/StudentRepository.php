@@ -12,4 +12,5 @@ interface StudentRepository
     public function remove(Student $student): bool;
     public function findById(int $id): ?Student;
     public function findByName(string $name): array;
+    public function findByCriteria(?int $id = null, ?string $name = null, ?string $cep = null): array;
 }
