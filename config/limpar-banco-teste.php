@@ -1,6 +1,6 @@
 <?php
 
-require_once 'config-teste.php';
+require_once 'database-teste.php';
 
 echo "=== LIMPEZA DO BANCO DE TESTE ===\n";
 

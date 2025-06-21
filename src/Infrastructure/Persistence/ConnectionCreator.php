@@ -8,8 +8,7 @@ class ConnectionCreator
 {
     public static function createConnection(): PDO
     {
-        $databasePath = __DIR__ . '/../../../banco.sqlite';
-
-        return new PDO(dsn:'sqlite:' . $databasePath);
+        $config = require __DIR__ . '/../../../config/database.php';
+        return new PDO('sqlite:' . $config['database']);
     }
 }

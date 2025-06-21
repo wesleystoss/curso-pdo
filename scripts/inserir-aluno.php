@@ -3,10 +3,10 @@
 use Alura\Pdo\Domain\Model\Student;
 use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
 
+require_once __DIR__ . '/../vendor/autoload.php';
 
-require_once 'vendor/autoload.php';
-
-$pdo = new PDO('sqlite:banco.sqlite');
+$config = require __DIR__ . '/../config/database.php';
+$pdo = new PDO('sqlite:' . $config['database']);
 $repository = new PdoStudentRepository($pdo);
 
 echo "Digite o nome do aluno: ";

@@ -8,9 +8,13 @@
         "ext-pdo": "*"
     },
     "scripts": {
-        "listar": "php lista-alunos.php",
-        "inserir": "php inserir-aluno.php",
-        "excluir": "php excluir-aluno.php",
+        "setup": "php scripts/setup.php",
+        "listar": "php scripts/lista-alunos.php",
+        "inserir": "php scripts/inserir-aluno.php",
+        "excluir": "php scripts/excluir-aluno.php",
+        "test": "php tests/teste-repository-melhorado.php",
+        "test:clean": "php config/limpar-banco-teste.php",
+        "test:isolated": "php tests/teste-repository.php",
         "git-deploy": "git add . && git commit -m \"$(read -p 'Digite a mensagem do commit: ' message && echo $message)\" && git push -u origin dev && echo \"Deploy realizado com sucesso\""
     }
 }

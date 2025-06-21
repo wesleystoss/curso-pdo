@@ -1,0 +1,31 @@
+# Dependências
+/vendor/
+
+# Arquivos de banco de dados
+/database/*.sqlite
+/database/*.sqlite-journal
+
+# Arquivos de configuração local
+.env
+.env.local
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de backup
+*.bak
+*.backup 

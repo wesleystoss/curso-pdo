@@ -6,7 +6,7 @@
  */
 
 // Configuração do banco de teste
-define('TEST_DATABASE_PATH', __DIR__ . '/banco-teste.sqlite');
+define('TEST_DATABASE_PATH', __DIR__ . '/../database/banco-teste.sqlite');
 
 // Função para criar conexão de teste
 function createTestConnection(): PDO

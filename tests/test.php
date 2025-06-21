@@ -2,9 +2,10 @@
 
 use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
 
-require_once 'vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-$pdo = new PDO('sqlite:banco.sqlite');
+$config = require __DIR__ . '/../config/database.php';
+$pdo = new PDO('sqlite:' . $config['database']);
 
 // Criar tabela se não existir
 $pdo->exec('CREATE TABLE IF NOT EXISTS students (
