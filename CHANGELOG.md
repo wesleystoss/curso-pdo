@@ -129,3 +129,65 @@ composer run test:clean
 4. **Configurabilidade**: Configurações centralizadas e flexíveis
 5. **Documentação**: Projeto bem documentado
 6. **Padrões**: Seguindo boas práticas da comunidade PHP 
+## [2.0.0] - 2025-06-21
+
+### 🏗️ Nova Arquitetura MVC Implementada
+
+#### ✨ Principais Mudanças
+
+1. **Padrão MVC Implementado**
+   - Controller: `src/Infrastructure/Web/StudentController.php`
+   - View: `public/index.php` (simplificado)
+   - Bootstrap: `public/bootstrap.php` (configuração)
+
+2. **Separação de Responsabilidades**
+   - Lógica de negócio movida para o Controller
+   - View apenas para apresentação
+   - CSS separado em `public/assets/css/style.css`
+
+3. **Estrutura de Arquivos Melhorada**
+   ```
+   src/Infrastructure/Web/     # Nova pasta para controllers
+   public/assets/css/          # Assets organizados
+   public/bootstrap.php        # Configuração centralizada
+   ```
+
+#### 🚀 Novos Comandos do Servidor
+
+```bash
+# Gerenciamento do servidor web
+composer run server:start      # Iniciar servidor
+composer run server:stop       # Parar servidor
+composer run server:status     # Verificar status
+composer run server:restart    # Reiniciar servidor
+```
+
+#### 📊 Benefícios da Nova Arquitetura
+
+1. **Manutenibilidade**: Código mais organizado e fácil de manter
+2. **Escalabilidade**: Estrutura pronta para novos controllers
+3. **Testabilidade**: Cada componente pode ser testado isoladamente
+4. **Reutilização**: Controller pode ser usado por outras views
+5. **Padrões**: Seguindo boas práticas MVC da comunidade PHP
+
+#### 🔧 Melhorias Técnicas
+
+- **index.php**: Reduzido de 339 para 115 linhas
+- **CSS**: Separado em arquivo externo
+- **Controller**: Gerencia toda lógica de negócio
+- **Bootstrap**: Configuração centralizada
+- **Autoload**: Atualizado para nova estrutura
+
+#### 📝 Documentação Atualizada
+
+- README.md: Inclui nova estrutura MVC
+- README-FRONTEND.md: Detalhes da implementação MVC
+- Comandos do servidor documentados
+- Fluxo de dados explicado
+
+### 🎯 Próximos Passos
+
+- [ ] Implementar edição de alunos
+- [ ] Adicionar busca e filtros
+- [ ] Criar API REST
+- [ ] Implementar testes automatizados para o front-end

@@ -1,6 +1,6 @@
 # 🎓 Front-end para Gerenciador de Alunos
 
-Este é um front-end HTML moderno e responsivo para testar as operações de CRUD (Create, Read, Delete) do sistema de gerenciamento de alunos.
+Este é um front-end HTML moderno e responsivo para testar as operações de CRUD (Create, Read, Delete) do sistema de gerenciamento de alunos, implementado com padrão MVC.
 
 ## ✨ Funcionalidades
 
@@ -9,6 +9,14 @@ Este é um front-end HTML moderno e responsivo para testar as operações de CRU
 - **Excluir Aluno**: Botão para remover alunos com confirmação
 - **Estatísticas**: Cards mostrando total de alunos, maiores e menores de 18 anos
 - **Interface Moderna**: Design responsivo com gradientes e animações
+
+## 🏗️ Arquitetura MVC
+
+O front-end segue o padrão MVC (Model-View-Controller):
+
+- **Model**: `src/Domain/Model/Student.php` - Entidade do aluno
+- **View**: `public/index.php` - Interface HTML
+- **Controller**: `src/Infrastructure/Web/StudentController.php` - Lógica de negócio
 
 ## 🚀 Como Usar
 
@@ -24,13 +32,28 @@ cd /home/wesley/Projetos/Alura/curso-pdo
 composer install
 
 # Configurar o banco de dados
-php scripts/setup.php
+composer run setup
 ```
 
 ### 2. Iniciar o Servidor
 
-Você pode usar o servidor embutido do PHP:
+Use os comandos do Composer para gerenciar o servidor:
 
+```bash
+# Iniciar servidor PHP
+composer run server:start
+
+# Verificar status
+composer run server:status
+
+# Parar servidor
+composer run server:stop
+
+# Reiniciar servidor
+composer run server:restart
+```
+
+Ou manualmente:
 ```bash
 # Navegar para a pasta public
 cd public
@@ -38,8 +61,6 @@ cd public
 # Iniciar servidor na porta 8000
 php -S localhost:8000
 ```
-
-Ou usar o servidor Apache/Nginx configurando o DocumentRoot para a pasta `public`.
 
 ### 3. Acessar o Sistema
 
@@ -66,6 +87,7 @@ Abra seu navegador e acesse:
 - Escape de HTML para prevenir XSS
 - Validação de dados de entrada
 - Prepared statements (já implementado no repository)
+- Separação de responsabilidades (MVC)
 
 ### UX/UI
 - Auto-refresh após operações
@@ -77,15 +99,40 @@ Abra seu navegador e acesse:
 
 ```
 public/
-├── index.php          # Front-end principal
-└── .htaccess         # Configurações do servidor web
+├── assets/
+│   └── css/
+│       └── style.css      # Estilos CSS separados
+├── bootstrap.php          # Configuração da aplicação
+├── index.php              # View principal (HTML)
+└── .htaccess             # Configurações do servidor web
 ```
+
+## 🏗️ Componentes MVC
+
+### Controller (`src/Infrastructure/Web/StudentController.php`)
+- Gerencia requisições HTTP
+- Processa formulários
+- Valida dados
+- Chama o repository
+- Retorna dados estruturados
+
+### View (`public/index.php`)
+- Apenas HTML e apresentação
+- Sem lógica de negócio
+- CSS externo
+- JavaScript mínimo
+
+### Bootstrap (`public/bootstrap.php`)
+- Configura dependências
+- Cria instâncias necessárias
+- Chama o controller
+- Retorna dados para a view
 
 ## 🐛 Solução de Problemas
 
 ### Erro de Conexão com Banco
 - Verifique se o arquivo `database/banco.sqlite` existe
-- Execute `php scripts/setup.php` para criar o banco
+- Execute `composer run setup` para criar o banco
 
 ### Erro de Permissões
 - Certifique-se de que a pasta `database/` tem permissões de escrita
@@ -93,8 +140,12 @@ public/
 
 ### Página não Carrega
 - Verifique se o PHP está instalado: `php --version`
-- Confirme se o servidor está rodando na porta correta
+- Confirme se o servidor está rodando: `composer run server:status`
 - Verifique os logs de erro do servidor
+
+### Erro de Autoload
+- Execute: `composer dump-autoload`
+- Verifique se o namespace está correto
 
 ## 📊 Operações Disponíveis
 
@@ -121,7 +172,18 @@ public/
 - [ ] Exportação de dados
 - [ ] Upload de foto do aluno
 - [ ] Sistema de autenticação
+- [ ] API REST para integração
+- [ ] Testes automatizados para o front-end
+
+## 🔄 Fluxo de Dados
+
+1. **Requisição HTTP** → `public/index.php`
+2. **Bootstrap** → `public/bootstrap.php` configura dependências
+3. **Controller** → `src/Infrastructure/Web/StudentController.php` processa
+4. **Repository** → `src/Infrastructure/Repository/PdoStudentRepository.php` acessa banco
+5. **Model** → `src/Domain/Model/Student.php` representa dados
+6. **View** → `public/index.php` exibe resultado
 
 ---
 
-**Desenvolvido para o curso de PDO da Alura** 🚀 
+**Desenvolvido para o curso de PDO da Alura** 🚀

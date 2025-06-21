@@ -1,14 +1,14 @@
 # Curso PDO - Sistema de Gerenciamento de Alunos
 
-Sistema de gerenciamento de alunos desenvolvido em PHP com PDO, seguindo princípios de Clean Architecture.
+Sistema de gerenciamento de alunos desenvolvido em PHP com PDO, seguindo princípios de Clean Architecture e padrão MVC.
 
 ## 📋 Descrição
 
-Este projeto demonstra o uso de PDO (PHP Data Objects) para persistência de dados, implementando padrões de Domain-Driven Design (DDD) e Clean Architecture.
+Este projeto demonstra o uso de PDO (PHP Data Objects) para persistência de dados, implementando padrões de Domain-Driven Design (DDD), Clean Architecture e MVC (Model-View-Controller).
 
 ## 🏗️ Arquitetura
 
-O projeto segue a arquitetura em camadas:
+O projeto segue a arquitetura em camadas com padrão MVC:
 
 ```
 src/
@@ -17,7 +17,8 @@ src/
 │   └── Repository/  # Interfaces dos repositórios
 └── Infrastructure/  # Implementações técnicas
     ├── Persistence/ # Configurações de banco
-    └── Repository/  # Implementações dos repositórios
+    ├── Repository/  # Implementações dos repositórios
+    └── Web/         # Controllers (MVC)
 ```
 
 ## 🚀 Instalação
@@ -64,30 +65,78 @@ composer run test:clean
 composer run test:isolated
 ```
 
+### Servidor Web
+```bash
+# Iniciar servidor PHP
+composer run server:start
+
+# Parar servidor
+composer run server:stop
+
+# Verificar status do servidor
+composer run server:status
+
+# Reiniciar servidor
+composer run server:restart
+```
+
 ## 📁 Estrutura do Projeto
 
 ```
 curso-pdo/
 ├── config/              # Configurações
 │   ├── database.php
-│   └── database-teste.php
+│   ├── database-teste.php
+│   └── environment.php
 ├── database/            # Arquivos de banco
 │   ├── banco.sqlite
 │   └── banco-teste.sqlite
-├── scripts/             # Scripts de execução
+├── public/              # Front-end (DocumentRoot)
+│   ├── assets/
+│   │   └── css/
+│   │       └── style.css
+│   ├── bootstrap.php    # Configuração da aplicação
+│   ├── index.php        # View principal
+│   └── .htaccess
+├── scripts/             # Scripts de execução CLI
 │   ├── inserir-aluno.php
 │   ├── lista-alunos.php
-│   └── excluir-aluno.php
-├── tests/               # Testes
-│   ├── TestBuscadorDeCursos.php
-│   └── RepositoryTest.php
+│   ├── excluir-aluno.php
+│   ├── setup.php
+│   └── criar-tabela.php
 ├── src/                 # Código fonte
 │   ├── Domain/
+│   │   ├── Model/
+│   │   │   └── Student.php
+│   │   └── Repository/
+│   │       └── StudentRepository.php
 │   └── Infrastructure/
+│       ├── Persistence/
+│       │   └── ConnectionCreator.php
+│       ├── Repository/
+│       │   └── PdoStudentRepository.php
+│       └── Web/
+│           └── StudentController.php
+├── tests/               # Testes
+│   ├── teste-repository.php
+│   ├── teste-repository-melhorado.php
+│   └── test.php
 ├── vendor/              # Dependências
 ├── composer.json
-└── README.md
+├── README.md
+└── README-FRONTEND.md
 ```
+
+## 🌐 Front-end Web
+
+O projeto inclui um front-end moderno e responsivo para gerenciar alunos:
+
+- **Interface Web**: Acesse `http://localhost:8000`
+- **Funcionalidades**: Inserir, listar e excluir alunos
+- **Design**: Responsivo com CSS moderno
+- **Arquitetura**: Padrão MVC implementado
+
+Veja mais detalhes em [README-FRONTEND.md](README-FRONTEND.md)
 
 ## 🧪 Testes
 
@@ -103,7 +152,9 @@ O projeto inclui testes automatizados para garantir a qualidade do código:
 - **PDO** para acesso ao banco
 - **SQLite** como banco de dados
 - **Composer** para gerenciamento de dependências
+- **MVC** para organização do código
+- **Clean Architecture** para separação de responsabilidades
 
 ## 📝 Licença
 
-Este projeto é parte do curso de PDO da Alura. 
+Este projeto é parte do curso de PDO da Alura.
