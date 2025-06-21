@@ -131,6 +131,20 @@ if ($isSearch && !empty($searchResults)) {
                 <h2>📋 Lista de Alunos <?= $isSearch ? '<span class="search-indicator">(Resultados da Busca)</span>' : '' ?></h2>
                 
                 <?php if (!empty($students)): ?>
+                    <!-- Controles de seleção múltipla -->
+                    <div class="bulk-actions">
+                        <div class="bulk-controls">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="select-all">
+                                <span class="checkmark"></span>
+                                Selecionar Todos
+                            </label>
+                            <button type="button" id="delete-selected" class="btn btn-danger" disabled>
+                                🗑️ Excluir Selecionados (<span id="selected-count">0</span>)
+                            </button>
+                        </div>
+                    </div>
+                    
                     <!-- Informações de paginação -->
                     <?php if (!$isSearch && $pagination['totalPages'] > 1): ?>
                         <div class="pagination-info">
@@ -143,38 +157,59 @@ if ($isSearch && !empty($searchResults)) {
                         </div>
                     <?php endif; ?>
                     
-                    <table class="students-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nome</th>
-                                <th>Data de Nascimento</th>
-                                <th>Idade</th>
-                                <th>CEP</th>
-                                <th>Endereço</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($students as $student): ?>
+                    <form method="POST" id="bulk-delete-form">
+                        <input type="hidden" name="action" value="bulk_delete">
+                        <table class="students-table">
+                            <thead>
                                 <tr>
-                                    <td><?= $student->id() ?></td>
-                                    <td><?= htmlspecialchars($student->name()) ?></td>
-                                    <td><?= $student->birthDate()->format('d/m/Y') ?></td>
-                                    <td><?= $student->age() ?> anos</td>
-                                    <td><?= htmlspecialchars($student->cep()) ?: '-' ?></td>
-                                    <td><?= htmlspecialchars($student->address()) ?: '-' ?></td>
-                                    <td>
-                                        <form method="POST" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir este aluno?')">
-                                            <input type="hidden" name="action" value="delete">
-                                            <input type="hidden" name="id" value="<?= $student->id() ?>">
-                                            <button type="submit" class="btn btn-danger btn-small">🗑️ Excluir</button>
-                                        </form>
-                                    </td>
+                                    <th class="checkbox-header">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" id="select-all-header">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </th>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Data de Nascimento</th>
+                                    <th>Idade</th>
+                                    <th>CEP</th>
+                                    <th>Endereço</th>
+                                    <th>Ações</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($students as $student): ?>
+                                    <tr>
+                                        <td class="checkbox-cell">
+                                            <label class="checkbox-container">
+                                                <input type="checkbox" name="selected_ids[]" value="<?= $student->id() ?>" class="student-checkbox">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </td>
+                                        <td><?= $student->id() ?></td>
+                                        <td><?= htmlspecialchars($student->name()) ?></td>
+                                        <td><?= $student->birthDate()->format('d/m/Y') ?></td>
+                                        <td><?= $student->age() ?> anos</td>
+                                        <td><?= htmlspecialchars($student->cep()) ?: '-' ?></td>
+                                        <td><?= htmlspecialchars($student->address()) ?: '-' ?></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button type="button" class="btn btn-primary btn-small" 
+                                                        onclick="openEditModal(<?= $student->id() ?>, '<?= htmlspecialchars($student->name()) ?>', '<?= $student->birthDate()->format('Y-m-d') ?>', '<?= htmlspecialchars($student->cep()) ?>', '<?= htmlspecialchars($student->address()) ?>')">
+                                                    ✏️ Editar
+                                                </button>
+                                                <form method="POST" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir este aluno?')">
+                                                    <input type="hidden" name="action" value="delete">
+                                                    <input type="hidden" name="id" value="<?= $student->id() ?>">
+                                                    <button type="submit" class="btn btn-danger btn-small">🗑️ Excluir</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </form>
                     
                     <!-- Paginação -->
                     <?php if (!$isSearch && $pagination['totalPages'] > 1): ?>
@@ -223,6 +258,45 @@ if ($isSearch && !empty($searchResults)) {
                     </p>
                 <?php endif; ?>
             </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Editar Aluno</h2>
+                <span class="close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <form method="POST" id="editForm">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="id" id="edit_id">
+                <div class="form-group">
+                    <label for="edit_name">Nome do Aluno:</label>
+                    <input type="text" id="edit_name" name="name" required placeholder="Digite o nome completo">
+                </div>
+                <div class="form-group">
+                    <label for="edit_birth_date">Data de Nascimento:</label>
+                    <input type="date" id="edit_birth_date" name="birth_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_cep">CEP:</label>
+                    <div class="cep-group">
+                        <input type="text" id="edit_cep" name="cep" placeholder="00000-000" maxlength="9">
+                        <button type="button" id="edit_buscar_cep" class="btn btn-secondary">🔍 Buscar</button>
+                    </div>
+                    <small>Digite o CEP para buscar o endereço automaticamente</small>
+                </div>
+                <div class="form-group">
+                    <label for="edit_address">Endereço:</label>
+                    <input type="text" id="edit_address" name="address" placeholder="Endereço completo">
+                    <small>Será preenchido automaticamente ao buscar o CEP</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancelar</button>
+                    <button type="submit" class="btn">Salvar Alterações</button>
+                </div>
+            </form>
         </div>
     </div>
     
@@ -312,12 +386,149 @@ if ($isSearch && !empty($searchResults)) {
             }
         });
         
+        // Sistema de seleção múltipla
+        const selectAllCheckbox = document.getElementById('select-all');
+        const selectAllHeaderCheckbox = document.getElementById('select-all-header');
+        const studentCheckboxes = document.querySelectorAll('.student-checkbox');
+        const deleteSelectedBtn = document.getElementById('delete-selected');
+        const selectedCountSpan = document.getElementById('selected-count');
+        
+        // Função para atualizar contador e estado do botão
+        function updateSelectionState() {
+            const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
+            const totalBoxes = studentCheckboxes.length;
+            
+            selectedCountSpan.textContent = checkedBoxes.length;
+            deleteSelectedBtn.disabled = checkedBoxes.length === 0;
+            
+            // Atualizar estado dos checkboxes "selecionar todos"
+            const allChecked = checkedBoxes.length === totalBoxes && totalBoxes > 0;
+            selectAllCheckbox.checked = allChecked;
+            selectAllHeaderCheckbox.checked = allChecked;
+        }
+        
+        // Event listener para checkboxes individuais
+        studentCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectionState);
+        });
+        
+        // Event listener para "selecionar todos" (fora da tabela)
+        selectAllCheckbox.addEventListener('change', function() {
+            studentCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateSelectionState();
+        });
+        
+        // Event listener para "selecionar todos" (no cabeçalho da tabela)
+        selectAllHeaderCheckbox.addEventListener('change', function() {
+            studentCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateSelectionState();
+        });
+        
+        // Event listener para excluir selecionados
+        deleteSelectedBtn.addEventListener('click', function() {
+            const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
+            const selectedIds = Array.from(checkedBoxes).map(cb => cb.value);
+            
+            if (selectedIds.length === 0) {
+                alert('Selecione pelo menos um aluno para excluir.');
+                return;
+            }
+            
+            const confirmMessage = selectedIds.length === 1 
+                ? 'Tem certeza que deseja excluir este aluno?' 
+                : `Tem certeza que deseja excluir ${selectedIds.length} alunos selecionados?`;
+            
+            if (confirm(confirmMessage)) {
+                document.getElementById('bulk-delete-form').submit();
+            }
+        });
+        
         // Auto-refresh apenas para operações de inserção e exclusão (não busca)
         <?php if (($message || $error) && !$isSearch): ?>
         setTimeout(() => {
             window.location.href = window.location.pathname;
         }, 2000);
         <?php endif; ?>
+        
+        // Funções para controlar a modal de edição
+        function openEditModal(id, name, birthDate, cep, address) {
+            document.getElementById('edit_id').value = id;
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_birth_date').value = birthDate;
+            document.getElementById('edit_cep').value = cep;
+            document.getElementById('edit_address').value = address;
+            
+            // Definir data máxima como hoje para o campo de data de nascimento
+            document.getElementById('edit_birth_date').max = new Date().toISOString().split('T')[0];
+            
+            document.getElementById('editModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Previne scroll do body
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restaura scroll do body
+        }
+        
+        // Fechar modal ao clicar fora dela
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        }
+        
+        // Máscara para CEP na modal
+        document.getElementById('edit_cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) {
+                value = value.substring(0, 5) + '-' + value.substring(5, 8);
+            }
+            e.target.value = value;
+        });
+        
+        // Buscar CEP na modal
+        document.getElementById('edit_buscar_cep').addEventListener('click', function() {
+            const cep = document.getElementById('edit_cep').value.replace(/\D/g, '');
+            const addressField = document.getElementById('edit_address');
+            
+            if (cep.length !== 8) {
+                alert('Digite um CEP válido (8 dígitos)');
+                return;
+            }
+            
+            this.disabled = true;
+            this.textContent = '🔍 Buscando...';
+            
+            const formData = new FormData();
+            formData.append('action', 'buscar_cep');
+            formData.append('cep', cep);
+            
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addressField.value = data.endereco;
+                    alert('Endereço encontrado e preenchido automaticamente!');
+                } else {
+                    alert('Erro: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Erro ao buscar CEP: ' + error.message);
+            })
+            .finally(() => {
+                this.disabled = false;
+                this.textContent = '🔍 Buscar';
+            });
+        });
     </script>
 </body>
 </html>

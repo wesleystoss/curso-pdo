@@ -1,193 +1,76 @@
-# Changelog - Reorganização do Projeto
+# 📝 Changelog
 
-## [1.0.0] - 2024-06-21
+Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
-### 🎯 Adicionado
-- **Estrutura de pastas organizada** seguindo boas práticas
-- **Sistema de configuração centralizado** em `config/`
-- **Scripts organizados** em `scripts/`
-- **Testes organizados** em `tests/`
-- **Bancos de dados separados** em `database/`
-- **Script de setup automático** para facilitar a inicialização
-- **Arquivo .gitignore** para excluir arquivos desnecessários
-- **README.md completo** com documentação detalhada
-- **Configuração de ambiente** para diferentes ambientes
+## [2.0.0] - 2024-01-XX
 
-### 📁 Reorganização de Pastas
+### ✨ Adicionado
+- **Modal de Edição**: Interface moderna para editar alunos
+  - Modal com fundo escuro e blur
+  - Formulário pré-preenchido com dados do aluno
+  - Validação em tempo real
+  - Busca automática de CEP na modal
+  - Animações suaves de entrada e saída
+- **Botão de Editar**: Novo botão "✏️ Editar" na tabela de alunos
+- **Validação de Edição**: Verificação se o aluno existe antes de atualizar
+- **Feedback Visual**: Mensagens de sucesso/erro para operações de edição
 
-#### Antes:
-```
-curso-pdo/
-├── banco.sqlite
-├── banco-teste.sqlite
-├── config-teste.php
-├── inserir-aluno.php
-├── lista-alunos.php
-├── excluir-aluno.php
-├── teste-repository.php
-├── teste-repository-melhorado.php
-├── test.php
-├── criar-tabela.php
-├── conexao.php
-├── projeto-inicial.php
-├── limpar-banco-teste.php
-├── src/
-└── vendor/
-```
+### 🎨 Melhorado
+- **Interface**: Design mais moderno e responsivo
+- **UX**: Melhor experiência do usuário com modais
+- **Organização**: Estrutura de arquivos mais limpa e organizada
+- **Documentação**: README consolidado e mais completo
 
-#### Depois:
-```
-curso-pdo/
-├── config/              # Configurações centralizadas
-│   ├── database.php
-│   ├── database-teste.php
-│   ├── environment.php
-│   └── limpar-banco-teste.php
-├── database/            # Arquivos de banco
-│   ├── banco.sqlite
-│   └── banco-teste.sqlite
-├── scripts/             # Scripts de execução
-│   ├── setup.php
-│   ├── inserir-aluno.php
-│   ├── lista-alunos.php
-│   ├── excluir-aluno.php
-│   ├── criar-tabela.php
-│   ├── conexao.php
-│   └── projeto-inicial.php
-├── tests/               # Testes organizados
-│   ├── teste-repository.php
-│   ├── teste-repository-melhorado.php
-│   └── test.php
-├── src/                 # Código fonte (mantido)
-├── vendor/              # Dependências
-├── .gitignore          # Exclusões do Git
-├── README.md           # Documentação principal
-├── CHANGELOG.md        # Este arquivo
-└── composer.json       # Scripts atualizados
-```
+### 🧹 Limpeza
+- **READMEs Consolidados**: Removidos arquivos README duplicados
+- **Scripts Organizados**: Documentação dos scripts mantidos
+- **Arquivos Desnecessários**: Removidos scripts básicos de exemplo
 
-### 🔧 Melhorias Técnicas
+### 🔧 Técnico
+- **Controller**: Adicionado método `updateStudent()` no `StudentController`
+- **Validação**: Verificação de existência do aluno antes da atualização
+- **CSS**: Estilos para modal e botão primário
+- **JavaScript**: Funções para controle da modal e validações
 
-#### Configuração Centralizada
-- **`config/database.php`**: Configuração principal do banco
-- **`config/database-teste.php`**: Configuração específica para testes
-- **`config/environment.php`**: Configuração baseada em ambiente
+## [1.5.0] - 2024-01-XX
 
-#### Scripts do Composer
-```json
-{
-    "setup": "php scripts/setup.php",
-    "listar": "php scripts/lista-alunos.php",
-    "inserir": "php scripts/inserir-aluno.php",
-    "excluir": "php scripts/excluir-aluno.php",
-    "test": "php tests/teste-repository-melhorado.php",
-    "test:clean": "php config/limpar-banco-teste.php",
-    "test:isolated": "php tests/teste-repository.php"
-}
-```
+### ✨ Adicionado
+- **Busca Unificada**: Busca por nome ou ID
+- **Paginação**: Navegação eficiente para grandes volumes de dados
+- **Exclusão em Lote**: Seleção múltipla e exclusão em massa
+- **Serviço de CEP**: Busca automática de endereço via API
+- **Estatísticas**: Cards com informações em tempo real
 
-#### Caminhos Atualizados
-- Todos os arquivos agora usam caminhos relativos corretos
-- Configuração centralizada evita duplicação de código
-- Separação clara entre produção e teste
+### 🎨 Melhorado
+- **Interface Web**: Design responsivo e moderno
+- **Sistema de Abas**: Separação entre inserção e busca
+- **Feedback Visual**: Mensagens de sucesso e erro
+- **Validações**: Campos obrigatórios e validação de data
 
-### 🧪 Testes
-- **Testes isolados**: Cada teste usa banco limpo
-- **Testes de integração**: Verificam funcionalidades completas
-- **Script de limpeza**: Remove dados de teste automaticamente
+## [1.0.0] - 2024-01-XX
 
-### 📚 Documentação
-- **README.md**: Documentação completa do projeto
-- **CHANGELOG.md**: Histórico de mudanças
-- **Comentários**: Código documentado adequadamente
+### ✨ Adicionado
+- **CRUD Básico**: Inserir, listar e excluir alunos
+- **Arquitetura MVC**: Padrão Model-View-Controller
+- **Clean Architecture**: Separação de responsabilidades
+- **PDO**: Persistência de dados com PHP Data Objects
+- **SQLite**: Banco de dados leve e portável
+- **Interface CLI**: Scripts para operações via linha de comando
+- **Testes**: Testes automatizados para validação
 
-### 🚀 Como Usar
+### 🏗️ Arquitetura
+- **Domain Layer**: Modelos e interfaces de repositório
+- **Infrastructure Layer**: Implementações concretas
+- **Web Layer**: Controllers para interface web
+- **Persistence Layer**: Configurações de banco de dados
 
-#### Primeira vez:
-```bash
-composer install
-composer run setup
-```
+---
 
-#### Uso diário:
-```bash
-# Produção
-composer run listar
-composer run inserir
-composer run excluir
+## 📋 Convenções
 
-# Desenvolvimento
-composer run test
-composer run test:clean
-```
-
-### ✅ Benefícios da Reorganização
-
-1. **Manutenibilidade**: Código mais fácil de manter e entender
-2. **Escalabilidade**: Estrutura preparada para crescimento
-3. **Testabilidade**: Testes organizados e isolados
-4. **Configurabilidade**: Configurações centralizadas e flexíveis
-5. **Documentação**: Projeto bem documentado
-6. **Padrões**: Seguindo boas práticas da comunidade PHP 
-## [2.0.0] - 2025-06-21
-
-### 🏗️ Nova Arquitetura MVC Implementada
-
-#### ✨ Principais Mudanças
-
-1. **Padrão MVC Implementado**
-   - Controller: `src/Infrastructure/Web/StudentController.php`
-   - View: `public/index.php` (simplificado)
-   - Bootstrap: `public/bootstrap.php` (configuração)
-
-2. **Separação de Responsabilidades**
-   - Lógica de negócio movida para o Controller
-   - View apenas para apresentação
-   - CSS separado em `public/assets/css/style.css`
-
-3. **Estrutura de Arquivos Melhorada**
-   ```
-   src/Infrastructure/Web/     # Nova pasta para controllers
-   public/assets/css/          # Assets organizados
-   public/bootstrap.php        # Configuração centralizada
-   ```
-
-#### 🚀 Novos Comandos do Servidor
-
-```bash
-# Gerenciamento do servidor web
-composer run server:start      # Iniciar servidor
-composer run server:stop       # Parar servidor
-composer run server:status     # Verificar status
-composer run server:restart    # Reiniciar servidor
-```
-
-#### 📊 Benefícios da Nova Arquitetura
-
-1. **Manutenibilidade**: Código mais organizado e fácil de manter
-2. **Escalabilidade**: Estrutura pronta para novos controllers
-3. **Testabilidade**: Cada componente pode ser testado isoladamente
-4. **Reutilização**: Controller pode ser usado por outras views
-5. **Padrões**: Seguindo boas práticas MVC da comunidade PHP
-
-#### 🔧 Melhorias Técnicas
-
-- **index.php**: Reduzido de 339 para 115 linhas
-- **CSS**: Separado em arquivo externo
-- **Controller**: Gerencia toda lógica de negócio
-- **Bootstrap**: Configuração centralizada
-- **Autoload**: Atualizado para nova estrutura
-
-#### 📝 Documentação Atualizada
-
-- README.md: Inclui nova estrutura MVC
-- README-FRONTEND.md: Detalhes da implementação MVC
-- Comandos do servidor documentados
-- Fluxo de dados explicado
-
-### 🎯 Próximos Passos
-
-- [ ] Implementar edição de alunos
-- [ ] Adicionar busca e filtros
-- [ ] Criar API REST
-- [ ] Implementar testes automatizados para o front-end
+- **✨ Adicionado**: Novas funcionalidades
+- **🎨 Melhorado**: Melhorias em funcionalidades existentes
+- **🐛 Corrigido**: Correções de bugs
+- **🧹 Limpeza**: Remoção de código desnecessário
+- **🔧 Técnico**: Mudanças técnicas e de infraestrutura
+- **📝 Documentação**: Atualizações na documentação

@@ -39,8 +39,20 @@ class StudentController
                     $error = $result['error'];
                     break;
                     
+                case 'update':
+                    $result = $this->updateStudent();
+                    $message = $result['message'];
+                    $error = $result['error'];
+                    break;
+                    
                 case 'delete':
                     $result = $this->deleteStudent();
+                    $message = $result['message'];
+                    $error = $result['error'];
+                    break;
+                    
+                case 'bulk_delete':
+                    $result = $this->bulkDeleteStudents();
                     $message = $result['message'];
                     $error = $result['error'];
                     break;
@@ -123,6 +135,38 @@ class StudentController
         }
     }
     
+    private function updateStudent(): array
+    {
+        try {
+            $id = (int)($_POST['id'] ?? 0);
+            $name = $_POST['name'] ?? '';
+            $birthDate = $_POST['birth_date'] ?? '';
+            $cep = $_POST['cep'] ?? '';
+            $address = $_POST['address'] ?? '';
+            
+            if ($id <= 0) {
+                return ['message' => '', 'error' => 'ID inválido!'];
+            }
+            
+            if (empty($name) || empty($birthDate)) {
+                return ['message' => '', 'error' => 'Nome e data de nascimento são obrigatórios!'];
+            }
+            
+            // Verificar se o aluno existe
+            $existingStudent = $this->repository->findById($id);
+            if (!$existingStudent) {
+                return ['message' => '', 'error' => 'Aluno não encontrado!'];
+            }
+            
+            $student = new Student($id, $name, new \DateTimeImmutable($birthDate), $cep, $address);
+            $this->repository->save($student);
+            
+            return ['message' => 'Aluno atualizado com sucesso!', 'error' => ''];
+        } catch (\Exception $e) {
+            return ['message' => '', 'error' => 'Erro ao atualizar aluno: ' . $e->getMessage()];
+        }
+    }
+    
     private function deleteStudent(): array
     {
         try {
@@ -135,6 +179,58 @@ class StudentController
             return ['message' => '', 'error' => 'ID inválido'];
         } catch (\Exception $e) {
             return ['message' => '', 'error' => 'Erro ao excluir aluno: ' . $e->getMessage()];
+        }
+    }
+    
+    private function bulkDeleteStudents(): array
+    {
+        try {
+            $selectedIds = $_POST['selected_ids'] ?? [];
+            
+            if (empty($selectedIds)) {
+                return ['message' => '', 'error' => 'Nenhum aluno selecionado para exclusão.'];
+            }
+
+            // Validar IDs
+            $validIds = [];
+            foreach ($selectedIds as $id) {
+                $id = (int)$id;
+                if ($id > 0) {
+                    $validIds[] = $id;
+                }
+            }
+
+            if (empty($validIds)) {
+                return ['message' => '', 'error' => 'IDs inválidos fornecidos.'];
+            }
+
+            // Buscar alunos para verificar se existem
+            $studentsToDelete = [];
+            foreach ($validIds as $id) {
+                $student = $this->repository->findById($id);
+                if ($student) {
+                    $studentsToDelete[] = $student;
+                }
+            }
+
+            if (empty($studentsToDelete)) {
+                return ['message' => '', 'error' => 'Nenhum aluno válido encontrado para exclusão.'];
+            }
+
+            // Excluir alunos
+            $deletedCount = 0;
+            foreach ($studentsToDelete as $student) {
+                $this->repository->remove($student);
+                $deletedCount++;
+            }
+
+            $message = $deletedCount === 1 
+                ? '1 aluno excluído com sucesso!' 
+                : "{$deletedCount} alunos excluídos com sucesso!";
+
+            return ['message' => $message, 'error' => ''];
+        } catch (\Exception $e) {
+            return ['message' => '', 'error' => 'Erro ao excluir alunos: ' . $e->getMessage()];
         }
     }
     

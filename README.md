@@ -1,14 +1,26 @@
-# Curso PDO - Sistema de Gerenciamento de Alunos
+# 🎓 Sistema de Gerenciamento de Alunos com PDO
 
-Sistema de gerenciamento de alunos desenvolvido em PHP com PDO, seguindo princípios de Clean Architecture e padrão MVC.
+Sistema completo de gerenciamento de alunos desenvolvido em PHP com PDO, seguindo princípios de Clean Architecture e padrão MVC. Inclui interface web moderna e responsiva com funcionalidades completas de CRUD.
 
-## 📋 Descrição
+## ✨ Funcionalidades
 
-Este projeto demonstra o uso de PDO (PHP Data Objects) para persistência de dados, implementando padrões de Domain-Driven Design (DDD), Clean Architecture e MVC (Model-View-Controller).
+### 🎯 Operações CRUD
+- **✅ Inserir Aluno**: Formulário para adicionar novos alunos
+- **📋 Listar Alunos**: Tabela com paginação e estatísticas
+- **✏️ Editar Aluno**: Modal para edição com validação
+- **🗑️ Excluir Aluno**: Exclusão individual e em lote
+- **🔍 Buscar Aluno**: Busca por nome ou ID
+
+### 🎨 Interface Moderna
+- **Responsivo**: Funciona em desktop, tablet e mobile
+- **Modal de Edição**: Interface moderna com fundo escuro
+- **Validação em Tempo Real**: CEP automático e validações
+- **Estatísticas**: Cards com informações em tempo real
+- **Paginação**: Navegação eficiente para muitos registros
 
 ## 🏗️ Arquitetura
 
-O projeto segue a arquitetura em camadas com padrão MVC:
+O projeto segue a arquitetura em camadas com padrão MVC e Clean Architecture:
 
 ```
 src/
@@ -18,16 +30,42 @@ src/
 └── Infrastructure/  # Implementações técnicas
     ├── Persistence/ # Configurações de banco
     ├── Repository/  # Implementações dos repositórios
+    ├── Service/     # Serviços externos (CEP)
     └── Web/         # Controllers (MVC)
 ```
 
-## 🚀 Instalação
+## 🚀 Instalação e Configuração
 
-1. Clone o repositório
-2. Instale as dependências:
+### 1. Pré-requisitos
+- PHP 8.0+
+- Composer
+- SQLite (incluído no PHP)
+
+### 2. Instalação
 ```bash
+# Clone o repositório
+git clone <repository-url>
+cd curso-pdo
+
+# Instale as dependências
 composer install
+
+# Configure o banco de dados
+composer run setup
 ```
+
+### 3. Iniciar o Servidor
+```bash
+# Iniciar servidor PHP
+composer run server:start
+
+# Ou manualmente
+cd public
+php -S localhost:8000
+```
+
+### 4. Acessar o Sistema
+Abra seu navegador e acesse: `http://localhost:8000`
 
 ## 📊 Configuração do Banco
 
@@ -115,6 +153,8 @@ curso-pdo/
 │       │   └── ConnectionCreator.php
 │       ├── Repository/
 │       │   └── PdoStudentRepository.php
+│       ├── Service/
+│       │   └── CepService.php
 │       └── Web/
 │           └── StudentController.php
 ├── tests/               # Testes
@@ -123,20 +163,25 @@ curso-pdo/
 │   └── test.php
 ├── vendor/              # Dependências
 ├── composer.json
-├── README.md
-└── README-FRONTEND.md
+└── README.md
 ```
 
-## 🌐 Front-end Web
+## 🎨 Características do Design
 
-O projeto inclui um front-end moderno e responsivo para gerenciar alunos:
+### Interface Web
+- **Responsivo**: Funciona em desktop, tablet e mobile
+- **Moderno**: Gradientes, sombras e animações suaves
+- **Modal de Edição**: Interface moderna com fundo escuro e blur
+- **Intuitivo**: Interface clara e fácil de usar
+- **Feedback Visual**: Mensagens de sucesso e erro
+- **Validação**: Campos obrigatórios e validação de data
 
-- **Interface Web**: Acesse `http://localhost:8000`
-- **Funcionalidades**: Inserir, listar e excluir alunos
-- **Design**: Responsivo com CSS moderno
-- **Arquitetura**: Padrão MVC implementado
-
-Veja mais detalhes em [README-FRONTEND.md](README-FRONTEND.md)
+### Funcionalidades Técnicas
+- **Validações**: Nome e data de nascimento obrigatórios
+- **CEP Automático**: Busca de endereço via API
+- **Segurança**: Escape de HTML, validação de dados, prepared statements
+- **UX/UI**: Auto-refresh, mensagens de feedback, loading states
+- **Paginação**: Navegação eficiente para grandes volumes de dados
 
 ## 🧪 Testes
 
@@ -146,6 +191,16 @@ O projeto inclui testes automatizados para garantir a qualidade do código:
 - **Testes Isolados**: Cada teste usa um banco limpo
 - **Testes de Integração**: Testam a integração com o banco
 
+### Executar Testes
+```bash
+# Todos os testes
+composer run test
+
+# Testes específicos
+php tests/teste-repository.php
+php tests/teste-repository-melhorado.php
+```
+
 ## 🔧 Tecnologias
 
 - **PHP 8.0+**
@@ -154,7 +209,78 @@ O projeto inclui testes automatizados para garantir a qualidade do código:
 - **Composer** para gerenciamento de dependências
 - **MVC** para organização do código
 - **Clean Architecture** para separação de responsabilidades
+- **HTML5/CSS3** para interface moderna
+- **JavaScript** para interações dinâmicas
+
+## 🐛 Solução de Problemas
+
+### Erro de Conexão com Banco
+- Verifique se o arquivo `database/banco.sqlite` existe
+- Execute `composer run setup` para criar o banco
+
+### Erro de Permissões
+- Certifique-se de que a pasta `database/` tem permissões de escrita
+- Execute: `chmod 755 database/`
+
+### Página não Carrega
+- Verifique se o PHP está instalado: `php --version`
+- Confirme se o servidor está rodando: `composer run server:status`
+- Verifique os logs de erro do servidor
+
+### Erro de Autoload
+- Execute: `composer dump-autoload`
+- Verifique se o namespace está correto
+
+## 📊 Operações Disponíveis
+
+### 1. Inserir Aluno
+- Preencha o nome completo
+- Selecione a data de nascimento
+- Opcional: Digite o CEP para buscar endereço automaticamente
+- Clique em "Inserir Aluno"
+
+### 2. Editar Aluno
+- Clique no botão "✏️ Editar" na linha do aluno
+- Modal será aberta com dados preenchidos
+- Faça as alterações necessárias
+- Clique em "Salvar Alterações"
+
+### 3. Buscar Aluno
+- Selecione o tipo de busca (Nome ou ID)
+- Digite o termo de busca
+- Clique em "🔍 Buscar"
+- Resultados serão exibidos na tabela
+
+### 4. Excluir Aluno
+- **Individual**: Clique no botão "🗑️ Excluir" na linha do aluno
+- **Em Lote**: Selecione múltiplos alunos e clique em "Excluir Selecionados"
+- Confirme a exclusão no popup
+
+## 🔄 Fluxo de Dados
+
+1. **Requisição HTTP** → `public/index.php`
+2. **Bootstrap** → `public/bootstrap.php` configura dependências
+3. **Controller** → `src/Infrastructure/Web/StudentController.php` processa
+4. **Repository** → `src/Infrastructure/Repository/PdoStudentRepository.php` acessa banco
+5. **Model** → `src/Domain/Model/Student.php` representa dados
+6. **View** → `public/index.php` exibe resultado
+
+## 🎯 Próximas Melhorias
+
+- [x] Funcionalidade de edição de alunos
+- [x] Busca e filtros
+- [x] Paginação para muitos registros
+- [x] Exclusão em lote
+- [ ] Exportação de dados
+- [ ] Upload de foto do aluno
+- [ ] Sistema de autenticação
+- [ ] API REST para integração
+- [ ] Testes automatizados para o front-end
 
 ## 📝 Licença
 
 Este projeto é parte do curso de PDO da Alura.
+
+---
+
+**Desenvolvido para o curso de PDO da Alura** 🚀
