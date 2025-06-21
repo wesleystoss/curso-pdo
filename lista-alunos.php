@@ -11,6 +11,11 @@ $statement = $pdo->query('SELECT * FROM students');
 
 $studentDataList = $statement->fetchAll(PDO::FETCH_ASSOC);
 
+if (count($studentDataList) === 0) {
+    echo "Nenhum aluno encontrado" . PHP_EOL;
+    exit();
+}
+
 foreach ($studentDataList as $student) {
     echo "------------------------" . PHP_EOL;
     $birthDate = new \DateTimeImmutable($student['birth_date']);
