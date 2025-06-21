@@ -3,9 +3,10 @@
 use Alura\Pdo\Domain\Model\Student;
 use Alura\Pdo\Infrastructure\Persistence\ConnectionCreator;
 
-require_once 'vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-$pdo = ConnectionCreator::createConnection();
+$config = require __DIR__ . '/../config/database.php';
+$pdo = new PDO('sqlite:' . $config['database']);
 
 $statement = $pdo->query('SELECT * FROM students');
 

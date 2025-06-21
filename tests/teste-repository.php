@@ -3,12 +3,16 @@
 use Alura\Pdo\Domain\Model\Student;
 use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
 
-require_once 'vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../config/database-teste.php';
 
-$pdo = new PDO('sqlite:banco.sqlite');
+// Usar banco de teste separado
+$pdo = createTestConnection();
+
 $repository = new PdoStudentRepository($pdo);
 
-echo "=== TESTE DO REPOSITORY ===\n\n";
+echo "=== TESTE DO REPOSITORY (BANCO DE TESTE) ===\n";
+echo "Banco de teste: " . TEST_DATABASE_PATH . "\n\n";
 
 // Teste 1: Inserir alunos
 echo "1. Testando inserção de alunos...\n";
