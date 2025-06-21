@@ -15,6 +15,10 @@
         "test": "php tests/teste-repository-melhorado.php",
         "test:clean": "php config/limpar-banco-teste.php",
         "test:isolated": "php tests/teste-repository.php",
-        "git-deploy": "git add . && git commit -m \"$(read -p 'Digite a mensagem do commit: ' message && echo $message)\" && git push -u origin dev && echo \"Deploy realizado com sucesso\""
+        "git-deploy": "git add . && git commit -m \"$(read -p 'Digite a mensagem do commit: ' message && echo $message)\" && git push -u origin dev && echo \"Deploy realizado com sucesso\"",
+        "server:start": "echo \"🚀 Iniciando servidor PHP...\" && php -S localhost:8000 -t public & echo \"✅ Servidor iniciado em http://localhost:8000\" && echo \"📝 Para encerrar, use: composer run server:stop\"",
+        "server:stop": "echo \"🛑 Encerrando servidor PHP...\" && pkill -f 'php -S localhost:8000' && echo \"✅ Servidor encerrado\" || echo \"ℹ️  Nenhum servidor encontrado\"",
+        "server:restart": "composer run server:stop && sleep 2 && composer run server:start",
+        "server:status": "if pgrep -f 'php -S localhost:8000' > /dev/null; then echo \"🟢 Servidor rodando em http://localhost:8000\"; else echo \"🔴 Servidor não está rodando\"; fi"
     }
 }
