@@ -1,11 +1,13 @@
 <?php
 
 use Alura\Pdo\Domain\Model\Student;
-use Alura\Pdo\Infrastructure\Persistence\ConnectionCreator;
+use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
+
 
 require_once 'vendor/autoload.php';
 
-$pdo = ConnectionCreator::createConnection();
+$pdo = new PDO('sqlite:banco.sqlite');
+$repository = new PdoStudentRepository($pdo);
 
 echo "Digite o nome do aluno: ";
 $name = trim(fgets(STDIN));
@@ -19,19 +21,13 @@ try {
     exit(1);
 }
 
-
 $student = new Student(
     id: null,
     name: $name,
     birthDate: $birthDate
 );
 
-$sqlInsert = "INSERT INTO students (name, birth_date) VALUES (?, ?);";
-$statement = $pdo->prepare($sqlInsert);
-$statement->bindValue(1, $student->name());
-$statement->bindValue(2, $student->birthDate()->format('Y-m-d'));
-
-if ($statement->execute()) {
+if ($repository->save($student)) {
     echo "Aluno incluído" . PHP_EOL;
 } else {
     echo "Erro ao incluir aluno" . PHP_EOL;
