@@ -171,6 +171,9 @@ class EnvironmentConfig
         return $cacheDir;
     }
 
+    /**
+     * @return array<string>
+     */
     public function validate(): array
     {
         $errors = [];

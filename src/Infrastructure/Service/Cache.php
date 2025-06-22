@@ -111,6 +111,14 @@ class Cache
         return $this->cacheDir . md5($key) . '.cache';
     }
 
+    /**
+     * @return array{
+     *     total_files: int,
+     *     total_size: int,
+     *     expired_files: int,
+     *     valid_files: int
+     * }
+     */
     public function getStats(): array
     {
         $files = glob($this->cacheDir . '*');
