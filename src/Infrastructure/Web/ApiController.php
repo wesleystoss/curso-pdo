@@ -5,26 +5,32 @@ namespace Alura\Pdo\Infrastructure\Web;
 use Alura\Pdo\Domain\Repository\StudentRepository;
 use Alura\Pdo\Domain\Model\Student;
 use Alura\Pdo\Domain\Service\StudentValidator;
-use Alura\Pdo\Infrastructure\Service\Logger;
+use Alura\Pdo\Infrastructure\Service\AppLogger;
 use Alura\Pdo\Infrastructure\Service\Cache;
+use Alura\Pdo\Infrastructure\Service\EnvironmentConfig;
 
 class ApiController
 {
     private StudentRepository $repository;
     private StudentValidator $validator;
-    private Logger $logger;
+    private AppLogger $logger;
     private Cache $cache;
+    private EnvironmentConfig $config;
 
     public function __construct(StudentRepository $repository)
     {
         $this->repository = $repository;
         $this->validator = new StudentValidator();
-        $this->logger = Logger::getInstance();
+        $this->logger = AppLogger::getInstance();
         $this->cache = Cache::getInstance();
+        $this->config = EnvironmentConfig::getInstance();
     }
 
     public function handleRequest(): void
     {
+        // Capturar qualquer saída de erro PHP
+        ob_start();
+        
         header('Content-Type: application/json');
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -32,12 +38,18 @@ class ApiController
 
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             http_response_code(200);
+            ob_end_clean();
             return;
         }
 
         try {
-            $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-            $path = str_replace('/api', '', $path);
+            $path = $_GET['path'] ?? '/';
+            
+            $this->logger->info('API GET Request', [
+                'path' => $path,
+                'request_uri' => $_SERVER['REQUEST_URI'] ?? 'unknown',
+                'query_string' => $_SERVER['QUERY_STRING'] ?? 'unknown'
+            ]);
             
             switch ($_SERVER['REQUEST_METHOD']) {
                 case 'GET':
@@ -62,6 +74,15 @@ class ApiController
                 'trace' => $e->getTraceAsString()
             ]);
             $this->sendError($e->getMessage(), 500);
+        } finally {
+            // Limpar qualquer saída de erro PHP
+            $errorOutput = ob_get_clean();
+            // Só tratar como erro se não for vazio e não for apenas whitespace
+            if (!empty(trim($errorOutput))) {
+                $this->logger->error('PHP Error Output: ' . $errorOutput);
+                $msg = $this->config->isDebugEnabled() ? $errorOutput : 'Erro interno do PHP';
+                $this->sendError($msg, 500);
+            }
         }
     }
 
@@ -80,6 +101,14 @@ class ApiController
 
     private function handlePost(string $path): void
     {
+        $rawInput = file_get_contents('php://input');
+        $this->logger->info('API POST Request', [
+            'path' => $path,
+            'raw_input' => $rawInput,
+            'content_type' => $_SERVER['CONTENT_TYPE'] ?? '',
+            'method' => $_SERVER['REQUEST_METHOD']
+        ]);
+        
         if ($path === '/students' || $path === '/students/') {
             $this->createStudent();
         } else {
@@ -89,6 +118,14 @@ class ApiController
 
     private function handlePut(string $path): void
     {
+        $rawInput = file_get_contents('php://input');
+        $this->logger->info('API PUT Request', [
+            'path' => $path,
+            'raw_input' => $rawInput,
+            'content_type' => $_SERVER['CONTENT_TYPE'] ?? '',
+            'method' => $_SERVER['REQUEST_METHOD']
+        ]);
+        
         if (preg_match('/^\/students\/(\d+)$/', $path, $matches)) {
             $this->updateStudent((int) $matches[1]);
         } else {
@@ -144,10 +181,6 @@ class ApiController
         }
 
         try {
-            $this->validator->validateName($input['name'] ?? '');
-            $this->validator->validateBirthDate(new \DateTimeImmutable($input['birth_date'] ?? ''));
-            $this->validator->validateCep($input['cep'] ?? '');
-
             $student = new Student(
                 null,
                 $input['name'],
@@ -156,7 +189,12 @@ class ApiController
                 $input['address'] ?? ''
             );
 
-            $this->validator->validateStudent($student);
+            $errors = $this->validator->validateStudent($student);
+            
+            if (!empty($errors)) {
+                $this->sendError('Erro de validação: ' . implode(', ', $errors), 400);
+                return;
+            }
 
             if ($this->repository->save($student)) {
                 $this->cache->delete('api_students_all');
@@ -194,12 +232,10 @@ class ApiController
 
         try {
             if (isset($input['name'])) {
-                $this->validator->validateName($input['name']);
                 $student->changeName($input['name']);
             }
 
             if (isset($input['birth_date'])) {
-                $this->validator->validateBirthDate(new \DateTimeImmutable($input['birth_date']));
                 $student = new Student(
                     $student->id(),
                     $student->name(),
@@ -210,7 +246,6 @@ class ApiController
             }
 
             if (isset($input['cep'])) {
-                $this->validator->validateCep($input['cep']);
                 $student->changeCep($input['cep']);
             }
 
@@ -218,7 +253,12 @@ class ApiController
                 $student->changeAddress($input['address']);
             }
 
-            $this->validator->validateStudent($student);
+            $errors = $this->validator->validateStudent($student);
+            
+            if (!empty($errors)) {
+                $this->sendError('Erro de validação: ' . implode(', ', $errors), 400);
+                return;
+            }
 
             if ($this->repository->save($student)) {
                 $this->cache->delete('api_students_all');
