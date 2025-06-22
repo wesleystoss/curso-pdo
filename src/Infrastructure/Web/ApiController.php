@@ -70,7 +70,7 @@ class ApiController
         } catch (\Exception $e) {
             $this->logger->error('API Error: ' . $e->getMessage(), [
                 'method' => $_SERVER['REQUEST_METHOD'],
-                'path' => $path ?? 'unknown',
+                'path' => $path,
                 'trace' => $e->getTraceAsString()
             ]);
             $this->sendError($e->getMessage(), 500);

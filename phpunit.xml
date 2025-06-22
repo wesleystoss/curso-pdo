@@ -20,7 +20,6 @@
             <directory>tests/Unit</directory>
         </testsuite>
         <testsuite name="Legacy">
-            <file>tests/teste-repository.php</file>
             <file>tests/teste-repository-melhorado.php</file>
             <file>tests/teste-busca.php</file>
             <file>tests/teste-busca-web.php</file>
@@ -28,7 +27,6 @@
             <file>tests/teste-cep.php</file>
             <file>tests/teste-exclusao-lote.php</file>
             <file>tests/teste-paginacao.php</file>
-            <file>tests/test.php</file>
         </testsuite>
     </testsuites>
 

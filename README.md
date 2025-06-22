@@ -99,12 +99,14 @@ composer install
 cp env.example .env
 # Edite o arquivo .env com suas configurações
 
-# Configure o banco de dados
+# Configure o banco de dados (produção e teste)
 composer run setup
 
-# Execute os testes
-composer run test
+# OU, para garantir que o banco de teste esteja pronto antes dos testes:
+composer run test:all
 ```
+
+> **Dica:** O comando `composer run test:all` executa o setup e depois todos os testes, garantindo que o banco de teste esteja sempre pronto.
 
 ### 3. Iniciar o Servidor
 ```bash
@@ -131,6 +133,8 @@ php -S localhost:8000
 ### Banco de Teste
 - Arquivo: `database/banco-teste.sqlite`
 - Configuração: `config/database-teste.php`
+
+> **Importante:** O banco de teste será criado automaticamente ao rodar `composer run setup` ou `composer run test:all`. Se estiver rodando os testes pela primeira vez, utilize sempre um desses comandos para garantir que as tabelas estejam criadas.
 
 ## 🛠️ Comandos Disponíveis
 

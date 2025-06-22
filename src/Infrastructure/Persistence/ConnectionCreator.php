@@ -9,6 +9,13 @@ class ConnectionCreator
     public static function createConnection(): PDO
     {
         $config = require __DIR__ . '/../../../config/database.php';
-        return new PDO('sqlite:' . $config['database']);
+        $pdo = new PDO('sqlite:' . $config['database']);
+        
+        // Aplicar opções de configuração
+        foreach ($config['options'] as $option => $value) {
+            $pdo->setAttribute($option, $value);
+        }
+        
+        return $pdo;
     }
 }

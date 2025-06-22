@@ -114,6 +114,9 @@ class StudentController
         ];
     }
     
+    /**
+     * @return array{message: string, error: string}
+     */
     private function insertStudent(): array
     {
         try {
@@ -135,6 +138,9 @@ class StudentController
         }
     }
     
+    /**
+     * @return array{message: string, error: string}
+     */
     private function updateStudent(): array
     {
         try {
@@ -167,6 +173,9 @@ class StudentController
         }
     }
     
+    /**
+     * @return array{message: string, error: string}
+     */
     private function deleteStudent(): array
     {
         try {
@@ -182,6 +191,9 @@ class StudentController
         }
     }
     
+    /**
+     * @return array{message: string, error: string}
+     */
     private function bulkDeleteStudents(): array
     {
         try {
