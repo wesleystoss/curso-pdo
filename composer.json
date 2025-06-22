@@ -1,14 +1,36 @@
 {
+    "name": "alura/pdo-student-management",
+    "description": "Sistema profissional de gerenciamento de alunos com PDO, Clean Architecture e interface moderna",
+    "type": "project",
+    "keywords": ["php", "pdo", "clean-architecture", "student-management", "api"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Desenvolvedor",
+            "email": "dev@example.com"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Alura\\Pdo\\": "src/"
         }
     },
     "require": {
-        "ext-pdo": "*"
+        "php": "^8.1",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "vlucas/phpdotenv": "^5.5",
+        "monolog/monolog": "^2.9",
+        "symfony/http-foundation": "^5.4",
+        "symfony/validator": "^5.4",
+        "league/csv": "^9.0",
+        "phpmailer/phpmailer": "^6.8"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^1.10",
+        "squizlabs/php_codesniffer": "^3.7",
+        "symfony/var-dumper": "^5.4"
     },
     "scripts": {
         "setup": "php scripts/setup.php",
@@ -16,21 +38,34 @@
         "inserir": "php scripts/inserir-aluno.php",
         "excluir": "php scripts/excluir-aluno.php",
         "demo": "php scripts/demo-avancado.php",
-        "test": "php tests/teste-repository-melhorado.php",
-        "test:clean": "php config/limpar-banco-teste.php",
-        "test:isolated": "php tests/teste-repository.php",
+        "test": "phpunit",
         "test:unit": "phpunit --testsuite Unit",
         "test:integration": "phpunit --testsuite Integration",
-        "test:coverage": "phpunit --coverage-html coverage",
+        "test:coverage": "phpunit --coverage-html coverage --coverage-text",
+        "test:clean": "php config/limpar-banco-teste.php",
+        "test:isolated": "php tests/teste-repository.php",
+        "analyze": "phpstan analyse src tests",
+        "cs": "phpcs src tests",
+        "cs:fix": "phpcbf src tests",
         "cache:clear": "php -r \"require 'vendor/autoload.php'; Alura\\\\Pdo\\\\Infrastructure\\\\Service\\\\Cache::getInstance()->clear(); echo 'Cache limpo com sucesso!';\"",
         "cache:stats": "php -r \"require 'vendor/autoload.php'; print_r(Alura\\\\Pdo\\\\Infrastructure\\\\Service\\\\Cache::getInstance()->getStats());\"",
         "logs:view": "php -r \"require 'vendor/autoload.php'; $logs = Alura\\\\Pdo\\\\Infrastructure\\\\Service\\\\Logger::getInstance()->getRecentLogs(20); foreach($logs as $log) echo $log . PHP_EOL;\"",
         "logs:clear": "php -r \"require 'vendor/autoload.php'; Alura\\\\Pdo\\\\Infrastructure\\\\Service\\\\Logger::getInstance()->clearLogs(); echo 'Logs limpos com sucesso!';\"",
         "config:show": "php -r \"require 'vendor/autoload.php'; print_r(Alura\\\\Pdo\\\\Infrastructure\\\\Service\\\\EnvironmentConfig::getInstance()->toArray());\"",
-        "git-deploy": "git add . && git commit -m \"$(read -p 'Digite a mensagem do commit: ' message && echo $message)\" && git push -u origin dev && echo \"Deploy realizado com sucesso\"",
+        "deploy": "composer install --no-dev --optimize-autoloader && composer run test && echo 'Deploy realizado com sucesso!'",
         "server:start": "echo \"🚀 Iniciando servidor PHP...\" && php -S localhost:8000 -t public & echo \"✅ Servidor iniciado em http://localhost:8000\" && echo \"📝 Para encerrar, use: composer run server:stop\"",
         "server:stop": "echo \"🛑 Encerrando servidor PHP...\" && pkill -f 'php -S localhost:8000' && echo \"✅ Servidor encerrado\" || echo \"ℹ️  Nenhum servidor encontrado\"",
         "server:restart": "composer run server:stop && sleep 2 && composer run server:start",
-        "server:status": "if pgrep -f 'php -S localhost:8000' > /dev/null; then echo \"🟢 Servidor rodando em http://localhost:8000\"; else echo \"🔴 Servidor não está rodando\"; fi"
+        "server:status": "if pgrep -f 'php -S localhost:8000' > /dev/null; then echo \"🟢 Servidor rodando em http://localhost:8000\"; else echo \"🔴 Servidor não está rodando\"; fi",
+        "post-install-cmd": [
+            "php scripts/setup.php"
+        ],
+        "post-update-cmd": [
+            "php scripts/setup.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
     }
 }

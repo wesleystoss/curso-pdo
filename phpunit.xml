@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         cacheDirectory=".phpunit.cache"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTodoAnnotatedTests="true"
          verbose="true">
+    
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
@@ -11,16 +23,57 @@
         <testsuite name="Integration">
             <directory>tests/Integration</directory>
         </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+        <testsuite name="Legacy">
+            <file>tests/teste-repository.php</file>
+            <file>tests/teste-repository-melhorado.php</file>
+            <file>tests/teste-busca.php</file>
+            <file>tests/teste-busca-web.php</file>
+            <file>tests/teste-busca-unificada.php</file>
+            <file>tests/teste-cep.php</file>
+            <file>tests/teste-exclusao-lote.php</file>
+            <file>tests/teste-paginacao.php</file>
+            <file>tests/test.php</file>
+        </testsuite>
     </testsuites>
-    <coverage>
+
+    <coverage processUncoveredFiles="true">
         <include>
             <directory suffix=".php">src</directory>
         </include>
         <exclude>
             <directory>vendor</directory>
+            <directory>tests</directory>
+            <directory>public</directory>
+            <directory>scripts</directory>
+            <directory>config</directory>
+            <file>src/Infrastructure/Persistence/banco.sqlite</file>
         </exclude>
+        <report>
+            <html outputDirectory="coverage"/>
+            <text outputFile="coverage.txt"/>
+            <clover outputFile="coverage.xml"/>
+        </report>
     </coverage>
+
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="DB_DATABASE" value="database/banco-teste.sqlite"/>
+        <env name="CACHE_ENABLED" value="false"/>
+        <env name="LOG_LEVEL" value="debug"/>
     </php>
+
+    <listeners>
+        <listener class="Tests\TestListener">
+            <arguments>
+                <array>
+                    <element key="cacheDirectory">
+                        <string>.phpunit.cache</string>
+                    </element>
+                </array>
+            </arguments>
+        </listener>
+    </listeners>
 </phpunit> 
