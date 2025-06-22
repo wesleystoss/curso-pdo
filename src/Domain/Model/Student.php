@@ -4,9 +4,6 @@ namespace Alura\Pdo\Domain\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @Assert\Callback("validateStudent")
- */
 class Student
 {
     private ?int $id;

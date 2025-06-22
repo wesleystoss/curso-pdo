@@ -202,25 +202,6 @@ class StudentValidator
         return $errors;
     }
 
-    public function validateCep(string $cep): array
-    {
-        $errors = [];
-
-        $cepViolations = $this->validator->validate($cep, [
-            new Assert\NotBlank(['message' => 'CEP é obrigatório']),
-            new Assert\Regex([
-                'pattern' => '/^\d{8}$/',
-                'message' => 'CEP deve conter exatamente 8 dígitos'
-            ])
-        ]);
-
-        foreach ($cepViolations as $violation) {
-            $errors[] = $violation->getMessage();
-        }
-
-        return $errors;
-    }
-
     public function sanitizeInput(array $data): array
     {
         $sanitized = [];
@@ -274,6 +255,54 @@ class StudentValidator
             return 'adulto';
         } else {
             return 'idoso';
+        }
+    }
+
+    public function validateId(?int $id): void
+    {
+        if ($id !== null && $id <= 0) {
+            throw new \Alura\Pdo\Domain\Exception\StudentException("ID deve ser um número positivo: {$id}");
+        }
+    }
+
+    public function validateName(string $name): void
+    {
+        if (strlen($name) < 2) {
+            throw new \Alura\Pdo\Domain\Exception\StudentException("Nome inválido: '{$name}'. O nome deve ter pelo menos 2 caracteres.");
+        }
+        
+        if (!preg_match('/^[a-zA-ZÀ-ÿ\s]+$/', $name)) {
+            throw new \Alura\Pdo\Domain\Exception\StudentException("Nome contém caracteres inválidos: '{$name}'");
+        }
+    }
+
+    public function validateBirthDate(\DateTimeInterface $birthDate): void
+    {
+        $now = new \DateTimeImmutable();
+        if ($birthDate > $now) {
+            throw new \Alura\Pdo\Domain\Exception\StudentException("Data de nascimento não pode ser no futuro");
+        }
+    }
+
+    public function validateCep(string $cep): void
+    {
+        if (empty($cep)) {
+            return; // CEP é opcional
+        }
+        
+        if (strlen($cep) !== 8) {
+            throw new \Alura\Pdo\Domain\Exception\StudentException("CEP inválido: '{$cep}'. O CEP deve ter 8 dígitos.");
+        }
+        
+        if (!ctype_digit($cep)) {
+            throw new \Alura\Pdo\Domain\Exception\StudentException("CEP deve conter apenas números: '{$cep}'");
+        }
+    }
+
+    public function validateAge(int $age): void
+    {
+        if ($age < 0 || $age > 150) {
+            throw new \Alura\Pdo\Domain\Exception\StudentException("Idade inválida: {$age}. A idade deve estar entre 0 e 150 anos.");
         }
     }
 } 

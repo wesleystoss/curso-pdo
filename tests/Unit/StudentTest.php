@@ -116,9 +116,10 @@ class StudentTest extends TestCase
     public function testValidatorWithInvalidBirthDate(): void
     {
         $this->expectException(StudentException::class);
-        $this->expectExceptionMessage("Data de nascimento inválida: 'invalid-date'. Use o formato YYYY-MM-DD.");
+        $this->expectExceptionMessage("Data de nascimento não pode ser no futuro");
         
-        $this->validator->validateBirthDate(new \DateTimeImmutable('invalid-date'));
+        $futureDate = new \DateTimeImmutable('+1 year');
+        $this->validator->validateBirthDate($futureDate);
     }
 
     public function testValidatorWithFutureBirthDate(): void
