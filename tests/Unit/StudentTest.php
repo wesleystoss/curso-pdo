@@ -1,6 +1,6 @@
 <?php
 
-namespace Alura\Pdo\Tests\Unit;
+namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Alura\Pdo\Domain\Model\Student;

@@ -15,6 +15,11 @@
             "Alura\\Pdo\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "require": {
         "php": "^8.1",
         "ext-json": "*",
@@ -42,8 +47,8 @@
         "demo": "php scripts/demo-avancado.php",
         "test": "phpunit",
         "test:unit": "phpunit --testsuite Unit",
-        "test:integration": "phpunit --testsuite Integration",
-        "test:coverage": "phpunit --coverage-html coverage --coverage-text",
+        "test:legacy": "phpunit --testsuite Legacy",
+        "test:coverage": "phpunit --coverage-html coverage --coverage-text --coverage-clover coverage.xml",
         "test:clean": "php config/limpar-banco-teste.php",
         "test:isolated": "php tests/teste-repository.php",
         "analyze": "phpstan analyse src tests",

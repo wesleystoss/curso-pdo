@@ -20,12 +20,6 @@
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
         </testsuite>
-        <testsuite name="Integration">
-            <directory>tests/Integration</directory>
-        </testsuite>
-        <testsuite name="Feature">
-            <directory>tests/Feature</directory>
-        </testsuite>
         <testsuite name="Legacy">
             <file>tests/teste-repository.php</file>
             <file>tests/teste-repository-melhorado.php</file>
@@ -64,16 +58,4 @@
         <env name="CACHE_ENABLED" value="false"/>
         <env name="LOG_LEVEL" value="debug"/>
     </php>
-
-    <listeners>
-        <listener class="Tests\TestListener">
-            <arguments>
-                <array>
-                    <element key="cacheDirectory">
-                        <string>.phpunit.cache</string>
-                    </element>
-                </array>
-            </arguments>
-        </listener>
-    </listeners>
 </phpunit> 

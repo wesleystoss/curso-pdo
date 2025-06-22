@@ -55,4 +55,14 @@ function removeTestDatabase(): void
     if (file_exists(TEST_DATABASE_PATH)) {
         unlink(TEST_DATABASE_PATH);
     }
-} 
+}
+
+return [
+    'driver' => 'sqlite',
+    'database' => __DIR__ . '/../database/banco-teste.sqlite',
+    'options' => [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ]
+]; 
