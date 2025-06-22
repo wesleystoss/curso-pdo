@@ -6,7 +6,7 @@ use Alura\Pdo\Infrastructure\Persistence\ConnectionCreator;
 use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
 use Alura\Pdo\Domain\Model\Student;
 use Alura\Pdo\Domain\Service\StudentValidator;
-use Alura\Pdo\Infrastructure\Service\Logger;
+use Alura\Pdo\Infrastructure\Service\AppLogger;
 use Alura\Pdo\Infrastructure\Service\Cache;
 use Alura\Pdo\Infrastructure\Service\EnvironmentConfig;
 use Alura\Pdo\Domain\Exception\StudentException;
@@ -28,7 +28,7 @@ try {
     // 2. Sistema de Logs
     echo "2. 📝 SISTEMA DE LOGS\n";
     echo "--------------------\n";
-    $logger = Logger::getInstance();
+    $logger = AppLogger::getInstance();
     $logger->info("Demonstração iniciada", ["script" => "demo-avancado.php"]);
     $logger->warning("Este é um teste de warning");
     $logger->error("Este é um teste de erro");
@@ -200,7 +200,7 @@ try {
     echo "Stack trace:\n" . $e->getTraceAsString() . "\n";
     
     // Log do erro
-    $logger = Logger::getInstance();
+    $logger = AppLogger::getInstance();
     $logger->error("Erro na demonstração", [
         "error" => $e->getMessage(),
         "file" => $e->getFile(),

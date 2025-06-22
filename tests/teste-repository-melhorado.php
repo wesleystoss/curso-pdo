@@ -4,17 +4,33 @@ use Alura\Pdo\Domain\Model\Student;
 use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../config/database-teste.php';
+
+// Configurar banco de teste
+$databasePath = __DIR__ . '/../database/banco-teste.sqlite';
+$pdo = new PDO('sqlite:' . $databasePath);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 echo "=== TESTE DO REPOSITORY (BANCO DE TESTE MELHORADO) ===\n";
-echo "Banco de teste: " . TEST_DATABASE_PATH . "\n\n";
+echo "Banco de teste: " . $databasePath . "\n\n";
 
 // Limpar banco de teste antes de começar
 echo "Limpando banco de teste...\n";
-clearTestDatabase();
+if (file_exists($databasePath)) {
+    unlink($databasePath);
+}
+touch($databasePath);
 
-// Criar conexão de teste
-$pdo = createTestConnection();
+// Criar tabela
+$pdo->exec('
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        birth_date TEXT NOT NULL,
+        cep TEXT,
+        address TEXT
+    );
+');
+
 $repository = new PdoStudentRepository($pdo);
 
 // Teste 1: Inserir alunos
@@ -90,5 +106,5 @@ if (!empty($allStudents)) {
 echo "\n";
 
 echo "=== FIM DOS TESTES ===\n";
-echo "Banco de teste mantido em: " . TEST_DATABASE_PATH . "\n";
+echo "Banco de teste mantido em: " . $databasePath . "\n";
 echo "Para limpar completamente, execute: removeTestDatabase();\n"; 

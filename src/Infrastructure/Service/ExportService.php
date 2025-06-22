@@ -4,20 +4,26 @@ namespace Alura\Pdo\Infrastructure\Service;
 
 use Alura\Pdo\Domain\Model\Student;
 use Alura\Pdo\Domain\Repository\StudentRepository;
+use League\Csv\Writer;
 
 class ExportService
 {
     private StudentRepository $repository;
     private EnvironmentConfig $config;
-    private Logger $logger;
+    private AppLogger $logger;
 
     public function __construct(StudentRepository $repository)
     {
         $this->repository = $repository;
         $this->config = EnvironmentConfig::getInstance();
-        $this->logger = Logger::getInstance();
+        $this->logger = AppLogger::getInstance();
     }
 
+    /**
+     * @param array<int, Student>|null $students
+     * @param string|null $filename
+     * @return string
+     */
     public function exportToCsv(array $students = null, string $filename = null): string
     {
         if (!$this->config->get('export_csv_enabled', true)) {
@@ -70,6 +76,11 @@ class ExportService
         return $filepath;
     }
 
+    /**
+     * @param array<int, Student>|null $students
+     * @param string|null $filename
+     * @return string
+     */
     public function exportToJson(array $students = null, string $filename = null): string
     {
         if ($students === null) {
@@ -108,6 +119,11 @@ class ExportService
         return $filepath;
     }
 
+    /**
+     * @param array<int, Student>|null $students
+     * @param string|null $filename
+     * @return string
+     */
     public function exportToXml(array $students = null, string $filename = null): string
     {
         if ($students === null) {
@@ -122,14 +138,14 @@ class ExportService
         $xml->startDocument('1.0', 'UTF-8');
         $xml->startElement('students');
         $xml->writeAttribute('exported_at', date('Y-m-d H:i:s'));
-        $xml->writeAttribute('total_records', count($students));
+        $xml->writeAttribute('total_records', (string)count($students));
 
         foreach ($students as $student) {
             $xml->startElement('student');
-            $xml->writeElement('id', $student->id());
+            $xml->writeElement('id', (string)$student->id());
             $xml->writeElement('name', $student->name());
             $xml->writeElement('birth_date', $student->birthDate()->format('Y-m-d'));
-            $xml->writeElement('age', $student->age());
+            $xml->writeElement('age', (string)$student->age());
             $xml->writeElement('cep', $student->cep());
             $xml->writeElement('address', $student->address());
             $xml->writeElement('age_group', $this->getAgeGroup($student->birthDate()));
@@ -152,6 +168,9 @@ class ExportService
         return $filepath;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function generateReport(): array
     {
         $students = $this->repository->allStudents();
@@ -232,6 +251,9 @@ class ExportService
         }
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getAvailableFormats(): array
     {
         $formats = [];
