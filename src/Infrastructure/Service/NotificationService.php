@@ -3,6 +3,8 @@
 namespace Alura\Pdo\Infrastructure\Service;
 
 use Alura\Pdo\Infrastructure\Service\EnvironmentConfig;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class NotificationService
 {
@@ -38,39 +40,51 @@ class NotificationService
         }
 
         try {
-            $headers = [
-                'From: ' . ($options['from'] ?? $this->config->get('app_email', 'noreply@example.com')),
-                'Reply-To: ' . ($options['reply_to'] ?? $this->config->get('app_email', 'noreply@example.com')),
-                'Content-Type: text/html; charset=UTF-8',
-                'X-Mailer: PHP/' . PHP_VERSION
-            ];
+            $mail = new PHPMailer(true);
+            // Configurações SMTP
+            $mail->isSMTP();
+            $mail->Host = $this->config->get('mail_host');
+            $mail->Port = $this->config->get('mail_port');
+            $mail->SMTPAuth = true;
+            $mail->Username = $this->config->get('mail_username');
+            $mail->Password = $this->config->get('mail_password');
+            $mail->SMTPSecure = $this->config->get('mail_encryption'); // 'tls' ou 'ssl'
 
+            // Remetente
+            $from = $options['from'] ?? $this->config->get('mail_from_address', $this->config->get('app_email', 'noreply@example.com'));
+            $fromName = $this->config->get('mail_from_name', $this->config->get('app_name', 'Sistema'));
+            $mail->setFrom($from, $fromName);
+
+            // Destinatário
+            $mail->addAddress($to);
+
+            // CC e BCC
             if (isset($options['cc'])) {
-                $headers[] = 'Cc: ' . $options['cc'];
+                $mail->addCC($options['cc']);
             }
-
             if (isset($options['bcc'])) {
-                $headers[] = 'Bcc: ' . $options['bcc'];
+                $mail->addBCC($options['bcc']);
+            }
+            // Reply-To
+            if (isset($options['reply_to'])) {
+                $mail->addReplyTo($options['reply_to']);
             }
 
-            $htmlMessage = $this->formatEmailMessage($message, $options);
+            $mail->isHTML(true);
+            $mail->CharSet = 'UTF-8';
+            $mail->Subject = $subject;
+            $mail->Body = $this->formatEmailMessage($message, $options);
 
-            $result = mail($to, $subject, $htmlMessage, implode("\r\n", $headers));
+            $mail->AltBody = strip_tags($message);
 
-            if ($result) {
-                $this->logger->info('Email enviado com sucesso', [
-                    'to' => $to,
-                    'subject' => $subject
-                ]);
-            } else {
-                $this->logger->error('Falha ao enviar email', [
-                    'to' => $to,
-                    'subject' => $subject
-                ]);
-            }
+            $mail->send();
 
-            return $result;
-        } catch (\Exception $e) {
+            $this->logger->info('Email enviado com sucesso', [
+                'to' => $to,
+                'subject' => $subject
+            ]);
+            return true;
+        } catch (Exception $e) {
             $this->logger->error('Erro ao enviar email: ' . $e->getMessage(), [
                 'to' => $to,
                 'subject' => $subject
@@ -176,7 +190,7 @@ class NotificationService
     {
         $subject = '🚨 Erro no Sistema - ' . $this->config->get('app_name');
         $message = "
-            <h2>🚨 Erro Detectado</h2>
+            <h2>�� Erro Detectado</h2>
             <p><strong>Erro:</strong> {$error}</p>
             <p><strong>Contexto:</strong> {$context}</p>
             <p><strong>Data/Hora:</strong> " . date('d/m/Y H:i:s') . "</p>

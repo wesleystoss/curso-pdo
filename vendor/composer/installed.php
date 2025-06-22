@@ -3,7 +3,7 @@
         'name' => 'alura/pdo-student-management',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '9e961be8200543a89277e7da00943b45efc60534',
+        'reference' => '80aa14a92cff1ed812ea6ec473add71480cc167e',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'alura/pdo-student-management' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '9e961be8200543a89277e7da00943b45efc60534',
+            'reference' => '80aa14a92cff1ed812ea6ec473add71480cc167e',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
