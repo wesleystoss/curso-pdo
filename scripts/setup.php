@@ -49,7 +49,9 @@ try {
     $sql = 'CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY,
         name TEXT,
-        birth_date TEXT
+        birth_date TEXT,
+        cep TEXT,
+        address TEXT
     )';
     
     $pdo->exec($sql);
