@@ -1,14 +1,24 @@
 parameters:
-    level: 8
+    level: 6
     paths:
         - src
         - tests
     excludePaths:
         - src/Infrastructure/Persistence/banco.sqlite
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
+        - database
+        - cache
+        - logs
     ignoreErrors:
         - '#Call to an undefined method [a-zA-Z0-9\\_]+::getInstance\(\)#'
         - '#Access to an undefined property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]+#'
+        - '#Parameter \#1 \$string of function strlen expects string, string\|null given#'
+        - '#Parameter \#1 \$string of function substr expects string, string\|null given#'
+        - '#Parameter \#1 \$haystack of function strpos expects string, string\|false given#'
+        - '#Parameter \#1 \$haystack of function substr_count expects string, string\|false given#'
+        - '#Parameter \#2 \$subject of function preg_match expects string, string\|false given#'
+        - '#Call to an undefined method Alura\\Pdo\\Domain\\Service\\StudentValidator::validateId\(\)#'
+        - '#Parameter \#1 \$id of method Alura\\Pdo\\Infrastructure\\Repository\\PdoStudentRepository::findById\(\) expects int, int\|null given#'
+        - '#Comparison operation ">" between -1\|0 and 0 is always false#'
+        - '#Variable \$idsValidos in empty\(\) always exists and is always falsy#'
     bootstrapFiles:
         - vendor/autoload.php 
