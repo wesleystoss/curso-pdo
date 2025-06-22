@@ -10,6 +10,15 @@ $databasePath = __DIR__ . '/../database/banco-teste.sqlite';
 $pdo = new PDO('sqlite:' . $databasePath);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+// Criar tabela se não existir
+$pdo->exec('CREATE TABLE IF NOT EXISTS students (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    birth_date TEXT NOT NULL,
+    cep TEXT,
+    address TEXT
+)');
+
 $repository = new PdoStudentRepository($pdo);
 
 echo "=== TESTE DO REPOSITORY (BANCO DE TESTE) ===\n";
