@@ -45,6 +45,9 @@ jobs:
     - name: Setup database
       run: composer run setup
     
+    - name: Prepare test database
+      run: php tests/setup_database.php
+    
     - name: Run tests
       run: composer run test
     

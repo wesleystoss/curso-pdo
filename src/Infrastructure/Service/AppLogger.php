@@ -65,46 +65,73 @@ class AppLogger
         }
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function emergency(string $message, array $context = []): void
     {
         $this->monologLogger->emergency($message, $context);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function alert(string $message, array $context = []): void
     {
         $this->monologLogger->alert($message, $context);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function critical(string $message, array $context = []): void
     {
         $this->monologLogger->critical($message, $context);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function error(string $message, array $context = []): void
     {
         $this->monologLogger->error($message, $context);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function warning(string $message, array $context = []): void
     {
         $this->monologLogger->warning($message, $context);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function notice(string $message, array $context = []): void
     {
         $this->monologLogger->notice($message, $context);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function info(string $message, array $context = []): void
     {
         $this->monologLogger->info($message, $context);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function debug(string $message, array $context = []): void
     {
         $this->monologLogger->debug($message, $context);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function log(string $level, string $message, array $context = []): void
     {
         $this->monologLogger->log($level, $message, $context);
@@ -202,6 +229,9 @@ class AppLogger
         ]);
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getRecentLogs(int $limit = 50): array
     {
         $logFile = $this->config->getLogPath() . '/app.log';
@@ -235,6 +265,9 @@ class AppLogger
         $this->info('Logs limpos manualmente');
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public function getLogStats(): array
     {
         $logPath = $this->config->getLogPath();
