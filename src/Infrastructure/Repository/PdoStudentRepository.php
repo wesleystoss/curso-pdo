@@ -16,6 +16,9 @@ class PdoStudentRepository implements StudentRepository
         $this->connection = $connection;
     }
 
+    /**
+     * @return array<int, Student>
+     */
     public function allStudents(): array
     {
         $sql = 'SELECT * FROM students';
@@ -36,6 +39,10 @@ class PdoStudentRepository implements StudentRepository
         return $studentList;
     }
 
+    /**
+     * @param \DateTimeInterface $birthDate
+     * @return array<int, Student>
+     */
     public function studentsBirthAt(\DateTimeInterface $birthDate): array
     {
         $sql = 'SELECT * FROM students WHERE birth_date = ?';
@@ -80,6 +87,10 @@ class PdoStudentRepository implements StudentRepository
         return null;
     }
 
+    /**
+     * @param string $name
+     * @return array<int, Student>
+     */
     public function findByName(string $name): array
     {
         $sql = 'SELECT * FROM students WHERE name LIKE ? ORDER BY name';
@@ -103,6 +114,12 @@ class PdoStudentRepository implements StudentRepository
         return $studentList;
     }
 
+    /**
+     * @param int|null $id
+     * @param string|null $name
+     * @param string|null $cep
+     * @return array<int, Student>
+     */
     public function findByCriteria(?int $id = null, ?string $name = null, ?string $cep = null): array
     {
         $conditions = [];
@@ -184,7 +201,10 @@ class PdoStudentRepository implements StudentRepository
         ]);
 
         if ($success) {
-            $student->defineId($this->connection->lastInsertId());
+            $lastInsertId = $this->connection->lastInsertId();
+            if ($lastInsertId !== false) {
+                $student->defineId((int)$lastInsertId);
+            }
         }
 
         return $success;

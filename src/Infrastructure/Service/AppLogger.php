@@ -168,6 +168,9 @@ class AppLogger
         ]);
     }
 
+    /**
+     * @param array<int> $studentIds
+     */
     public function logBulkDelete(array $studentIds): void
     {
         $this->warning('Exclusão em lote realizada', [
@@ -217,6 +220,9 @@ class AppLogger
         ]);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function logException(\Throwable $exception, array $context = []): void
     {
         $this->error('Exceção capturada', [

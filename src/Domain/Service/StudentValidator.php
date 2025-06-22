@@ -18,6 +18,10 @@ class StudentValidator
             ->getValidator();
     }
 
+    /**
+     * @param Student $student
+     * @return array<string>
+     */
     public function validateStudent(Student $student): array
     {
         $violations = $this->validator->validate($student);
@@ -30,6 +34,10 @@ class StudentValidator
         return $errors;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, array<string>>
+     */
     public function validateStudentData(array $data): array
     {
         $errors = [];
@@ -103,6 +111,10 @@ class StudentValidator
         return $errors;
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     * @return array<string, array<string>>
+     */
     public function validateSearchCriteria(array $criteria): array
     {
         $errors = [];
@@ -170,6 +182,10 @@ class StudentValidator
         return $errors;
     }
 
+    /**
+     * @param array<int> $studentIds
+     * @return array<string, array<string>>
+     */
     public function validateBulkDelete(array $studentIds): array
     {
         $errors = [];
@@ -202,6 +218,10 @@ class StudentValidator
         return $errors;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function sanitizeInput(array $data): array
     {
         $sanitized = [];
@@ -224,6 +244,10 @@ class StudentValidator
         return $sanitized;
     }
 
+    /**
+     * @param string $cep
+     * @return string
+     */
     public function formatCep(string $cep): string
     {
         // Remover caracteres não numéricos
