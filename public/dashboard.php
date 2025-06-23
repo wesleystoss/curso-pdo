@@ -1,4 +1,12 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// Carregar variáveis do .env
+if (file_exists(dirname(__DIR__) . '/.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+    $dotenv->load();
+}
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);

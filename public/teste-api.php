@@ -6,6 +6,12 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+// Carregar variáveis do .env
+if (file_exists(dirname(__DIR__) . '/.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+    $dotenv->load();
+}
+
 use Alura\Pdo\Infrastructure\Persistence\ConnectionCreator;
 use Alura\Pdo\Infrastructure\Repository\PdoStudentRepository;
 
