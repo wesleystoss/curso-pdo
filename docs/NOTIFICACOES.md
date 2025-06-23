@@ -26,13 +26,6 @@ Para que as notificações por email funcionem, certifique-se de que:
 
 ## 🧪 Como Testar as Notificações
 
-### Método 1: Via Página de Administração
-
-1. Acesse `http://localhost:8000/admin.php`
-2. Role até a seção "🔔 Teste de Notificações"
-3. Clique em "🧪 Testar Notificações"
-4. Verifique os resultados na tela
-
 ### Método 2: Via Script de Teste
 
 Execute o script de teste via terminal:

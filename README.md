@@ -121,8 +121,6 @@ php -S localhost:8000
 ### 4. Acessar o Sistema
 - **Interface Web**: `http://localhost:8000`
 - **Dashboard**: `http://localhost:8000/dashboard.php`
-- **Painel Admin**: `http://localhost:8000/admin.php`
-- **API REST**: `http://localhost:8000/api.php`
 
 ## 📊 Configuração do Banco
 
@@ -239,8 +237,6 @@ curso-pdo/
 │   ├── bootstrap.php     # Configuração da aplicação
 │   ├── index.php         # View principal
 │   ├── dashboard.php     # Dashboard moderno
-│   ├── admin.php         # Painel de administração
-│   ├── api.php           # Endpoint da API
 │   └── includes/
 │       ├── header.php
 │       └── footer.php

@@ -190,10 +190,8 @@ try {
     
     echo "📋 PRÓXIMOS PASSOS:\n";
     echo "1. Acesse http://localhost:8000 para a interface web\n";
-    echo "2. Acesse http://localhost:8000/admin.php para o painel de admin\n";
-    echo "3. Teste a API em http://localhost:8000/api/students\n";
-    echo "4. Execute \"composer run test:unit\" para os testes\n";
-    echo "5. Execute \"composer run logs:view\" para ver os logs\n";
+    echo "2. Execute \"composer run test:unit\" para os testes\n";
+    echo "3. Execute \"composer run logs:view\" para ver os logs\n";
 
 } catch (Exception $e) {
     echo "❌ ERRO NA DEMONSTRAÇÃO: " . $e->getMessage() . "\n";

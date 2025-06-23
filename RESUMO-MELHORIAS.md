@@ -180,9 +180,7 @@ composer run config:show
 - [x] Exceções customizadas
 - [x] Configuração por ambiente
 - [x] Testes unitários
-- [x] Painel de administração
 - [x] Documentação completa
-- [x] Comandos de administração
 - [x] Script de demonstração
 - [x] Interface moderna
 - [x] Segurança implementada

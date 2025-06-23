@@ -15,9 +15,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - **Exceções Customizadas** para tratamento profissional de erros
 - **Configuração por Ambiente** com variáveis de ambiente
 - **Testes Unitários** com PHPUnit para cobertura completa
-- **Painel de Administração** para monitoramento do sistema
 - **Documentação da API** com guia completo de uso
-- **Comandos de Administração** para gerenciar cache, logs e configurações
 
 ### 🔧 Melhorado
 - **Arquitetura**: Implementação completa de Clean Architecture
@@ -35,7 +33,6 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 ### 📚 Documentação
 - **README Atualizado**: Documentação completa das novas funcionalidades
 - **API.md**: Documentação detalhada da API REST
-- **Comandos**: Novos scripts para administração do sistema
 
 ### 🧪 Testes
 - **Testes Unitários**: Cobertura completa com PHPUnit

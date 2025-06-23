@@ -25,12 +25,6 @@
                 <a href="dashboard.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'dashboard.php' ? 'active' : '' ?>">
                     📊 Dashboard
                 </a>
-                <a href="admin.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'admin.php' ? 'active' : '' ?>">
-                    ⚙️ Administração
-                </a>
-                <a href="api.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'api.php' ? 'active' : '' ?>">
-                    🔌 API
-                </a>
             </div>
         </nav>
         

@@ -109,5 +109,4 @@ foreach ($logFiles as $file) {
 echo "\n✅ Teste concluído!\n";
 echo "💡 Dicas:\n";
 echo "- Verifique sua caixa de entrada para emails de teste\n";
-echo "- Para notificações do navegador, acesse a página de admin\n";
 echo "- Consulte os logs em /logs/ para mais detalhes\n"; 
