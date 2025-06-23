@@ -83,9 +83,19 @@ if ($action === 'clear_database') {
 }
 
 // Informações do sistema
-$dbPath = __DIR__ . '/../src/Infrastructure/Persistence/banco.sqlite';
-$dbSize = file_exists($dbPath) ? filesize($dbPath) : 0;
-$dbSizeFormatted = $dbSize > 1024 * 1024 ? round($dbSize / (1024 * 1024), 2) . ' MB' : round($dbSize / 1024, 2) . ' KB';
+$config = require __DIR__ . '/../config/database.php';
+
+$driverInfo = '<strong>Banco em uso:</strong> ' . htmlspecialchars($config['driver']) . '<br>';
+if ($config['driver'] === 'mysql') {
+    $driverInfo .= '<strong>Host:</strong> ' . htmlspecialchars($config['host']) . '<br>';
+    $driverInfo .= '<strong>Banco:</strong> ' . htmlspecialchars($config['database']) . '<br>';
+} else {
+    $driverInfo .= '<strong>Arquivo SQLite:</strong> ' . htmlspecialchars($config['database']) . '<br>';
+    $dbPath = $config['database'];
+    $dbSize = file_exists($dbPath) ? filesize($dbPath) : 0;
+    $dbSizeFormatted = $dbSize > 1024 * 1024 ? round($dbSize / (1024 * 1024), 2) . ' MB' : round($dbSize / 1024, 2) . ' KB';
+    $driverInfo .= '<strong>Tamanho do arquivo:</strong> ' . $dbSizeFormatted . '<br>';
+}
 
 $pageTitle = 'Administração - Gerenciador de Alunos';
 include 'includes/header.php';
@@ -433,6 +443,14 @@ include 'includes/header.php';
             <div class="info-item"><strong>Debug:</strong> <?= $config->isDebugEnabled() ? 'Ativado' : 'Desativado' ?></div>
             <div class="info-item"><strong>Cache:</strong> <?= $config->get('cache_enabled') ? 'Ativo' : 'Inativo' ?></div>
             <div class="info-item"><strong>Notificações:</strong> <?= $config->get('notifications_enabled') ? 'Ativas' : 'Inativas' ?></div>
+        </div>
+    </div>
+
+    <!-- Informações do Banco de Dados -->
+    <div class="section">
+        <h2>ℹ️ Informações do Banco de Dados</h2>
+        <div class="system-info">
+            <?= $driverInfo ?>
         </div>
     </div>
 </div>
